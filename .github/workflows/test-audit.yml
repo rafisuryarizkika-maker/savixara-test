@@ -1,0 +1,80 @@
+name: SAVIXARA Test Audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_database_tests:
+        description: "Run PostgreSQL integration tests against the isolated savixara-test database"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: savixara-test-audit
+  cancel-in-progress: false
+
+jobs:
+  local-tests:
+    name: Local security and logic tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout test repository
+        uses: actions/checkout@v4
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Run isolated unit tests (no database or provider calls)
+        run: |
+          deno test tests/auth-gate.test.ts tests/lease-guard.test.ts tests/melostore-http-auth.test.ts
+
+  database-tests:
+    name: PostgreSQL integration tests (test project only)
+    if: inputs.run_database_tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+    steps:
+      - name: Checkout test repository
+        uses: actions/checkout@v4
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Verify database secret targets savixara-test only
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${TEST_DATABASE_URL:-}" ]]; then
+            echo "::error::TEST_DATABASE_URL secret is missing. Add the direct connection string for the savixara-test Supabase database."
+            exit 1
+          fi
+          DB_HOST="$(TEST_DATABASE_URL="$TEST_DATABASE_URL" deno eval 'const u = new URL(Deno.env.get("TEST_DATABASE_URL")); console.log(u.hostname)')"
+          DB_PORT="$(TEST_DATABASE_URL="$TEST_DATABASE_URL" deno eval 'const u = new URL(Deno.env.get("TEST_DATABASE_URL")); console.log(u.port || "5432")')"
+          if [[ "$DB_HOST" != "db.bumoiebziefburtmisnn.supabase.co" || "$DB_PORT" != "5432" ]]; then
+            echo "::error::Database target rejected. Only db.bumoiebziefburtmisnn.supabase.co:5432 is permitted. No tests were run."
+            exit 1
+          fi
+          echo "Database target verified as the isolated savixara-test project."
+
+      - name: Run PostgreSQL integration tests
+        run: |
+          deno test --allow-env=TEST_DATABASE_URL --allow-net=db.bumoiebziefburtmisnn.supabase.co:5432 \
+            tests/admin-cost-rpc-auth.test.ts \
+            tests/admin-game-rpcs.test.ts \
+            tests/admin-save-product-prices.test.ts \
+            tests/postgres-concurrency.test.ts \
+            tests/rpc-catalog-protection.test.ts \
+            tests/rpc-decimal-price.test.ts \
+            tests/rpc-idempotency.test.ts \
+            tests/rpc-lease-guard.test.ts \
+            tests/rpc-lease-wrapper-8-param.test.ts
