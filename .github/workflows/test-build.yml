@@ -1,0 +1,55 @@
+name: SAVIXARA Test Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'index.html'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.js'
+      - 'scripts/verify-supabase-test-target.mjs'
+      - '.github/workflows/test-build.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      VITE_SUPABASE_URL: https://bumoiebziefburtmisnn.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_2jHWucsQvNqEiLLk9Re3aA_n0JFVr42
+    steps:
+      - name: Checkout test repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Verify Supabase target is isolated test project
+        run: node scripts/verify-supabase-test-target.mjs
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build website
+        run: npm run build
+
+      - name: Verify built entrypoint exists
+        run: test -s dist/index.html
+
+      - name: Upload build artifact (no deployment)
+        uses: actions/upload-artifact@v4
+        with:
+          name: savixara-test-build
+          path: dist/
+          retention-days: 3
