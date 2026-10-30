@@ -25,7 +25,8 @@ jobs:
 
       - name: Copy audit files and remove production deployment workflow
         run: |
-          rsync -a --exclude='.git/' --exclude='.github/' source/ ./
+          rsync -a --exclude='.git' --exclude='.github/' source/ ./
+          rm -rf source
           rm -f .github/workflows/main.yml
           python3 - <<'PY'
           from pathlib import Path
