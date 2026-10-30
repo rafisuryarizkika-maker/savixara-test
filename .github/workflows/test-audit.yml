@@ -55,20 +55,21 @@ jobs:
         run: |
           set -euo pipefail
           if [[ -z "${TEST_DATABASE_URL:-}" ]]; then
-            echo "::error::TEST_DATABASE_URL secret is missing. Add the direct connection string for the savixara-test Supabase database."
+            echo "::error::TEST_DATABASE_URL secret is missing."
             exit 1
           fi
           DB_HOST="$(TEST_DATABASE_URL="$TEST_DATABASE_URL" deno eval --allow-env=TEST_DATABASE_URL 'const u = new URL(Deno.env.get("TEST_DATABASE_URL")); console.log(u.hostname)')"
           DB_PORT="$(TEST_DATABASE_URL="$TEST_DATABASE_URL" deno eval --allow-env=TEST_DATABASE_URL 'const u = new URL(Deno.env.get("TEST_DATABASE_URL")); console.log(u.port || "5432")')"
-          if [[ "$DB_HOST" != "db.bumoiebziefburtmisnn.supabase.co" || "$DB_PORT" != "5432" ]]; then
-            echo "::error::Database target rejected. Only db.bumoiebziefburtmisnn.supabase.co:5432 is permitted. No tests were run."
+          DB_USER="$(TEST_DATABASE_URL="$TEST_DATABASE_URL" deno eval --allow-env=TEST_DATABASE_URL 'const u = new URL(Deno.env.get("TEST_DATABASE_URL")); console.log(decodeURIComponent(u.username))')"
+          if [[ "$DB_HOST" != "aws-0-ap-southeast-2.pooler.supabase.com" || "$DB_PORT" != "5432" || "$DB_USER" != "postgres.bumoiebziefburtmisnn" ]]; then
+            echo "::error::Database target rejected. Only the verified savixara-test Session pooler host, port, and project-specific username are permitted. No tests were run."
             exit 1
           fi
-          echo "Database target verified as the isolated savixara-test project."
+          echo "Database target verified as the isolated savixara-test Session pooler."
 
       - name: Run PostgreSQL integration tests
         run: |
-          deno test --allow-env=TEST_DATABASE_URL --allow-net=db.bumoiebziefburtmisnn.supabase.co:5432 \
+          deno test --allow-env=TEST_DATABASE_URL --allow-net=aws-0-ap-southeast-2.pooler.supabase.com:5432 \
             tests/admin-cost-rpc-auth.test.ts \
             tests/admin-game-rpcs.test.ts \
             tests/admin-save-product-prices.test.ts \
