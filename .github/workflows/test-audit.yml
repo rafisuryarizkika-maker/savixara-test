@@ -58,8 +58,8 @@ jobs:
             echo "::error::TEST_DATABASE_URL secret is missing. Add the direct connection string for the savixara-test Supabase database."
             exit 1
           fi
-          DB_HOST="$(TEST_DATABASE_URL="$TEST_DATABASE_URL" deno eval 'const u = new URL(Deno.env.get("TEST_DATABASE_URL")); console.log(u.hostname)')"
-          DB_PORT="$(TEST_DATABASE_URL="$TEST_DATABASE_URL" deno eval 'const u = new URL(Deno.env.get("TEST_DATABASE_URL")); console.log(u.port || "5432")')"
+          DB_HOST="$(TEST_DATABASE_URL="$TEST_DATABASE_URL" deno eval --allow-env=TEST_DATABASE_URL 'const u = new URL(Deno.env.get("TEST_DATABASE_URL")); console.log(u.hostname)')"
+          DB_PORT="$(TEST_DATABASE_URL="$TEST_DATABASE_URL" deno eval --allow-env=TEST_DATABASE_URL 'const u = new URL(Deno.env.get("TEST_DATABASE_URL")); console.log(u.port || "5432")')"
           if [[ "$DB_HOST" != "db.bumoiebziefburtmisnn.supabase.co" || "$DB_PORT" != "5432" ]]; then
             echo "::error::Database target rejected. Only db.bumoiebziefburtmisnn.supabase.co:5432 is permitted. No tests were run."
             exit 1
