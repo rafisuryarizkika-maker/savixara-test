@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs>
+  <linearGradient id="g" x1="70" y1="430" x2="445" y2="65" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#7C3AED"/>
+    <stop offset="0.52" stop-color="#2563EB"/>
+    <stop offset="1" stop-color="#00D9FF"/>
+  </linearGradient>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="10" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<!-- Abstract SAVIXARA S/X symbol -->
+<path d="M396 72 L300 86 L122 238 L198 247 L329 139 L280 257 L115 414 L214 402 L397 239 L325 231 Z"
+      fill="url(#g)" filter="url(#glow)"/>
+<path d="M122 238 L198 247 L329 139 L300 86 Z" fill="#00D9FF" opacity=".78"/>
+<path d="M115 414 L214 402 L397 239 L325 231 Z" fill="#7C3AED" opacity=".82"/>
+<path d="M174 224 L267 216 L338 155 L319 205 L245 270 L161 279 Z" fill="#0B1020" opacity=".96"/>
+<path d="M172 283 L250 274 L328 208 L304 265 L224 331 L145 339 Z" fill="#111827" opacity=".96"/>
+</svg>

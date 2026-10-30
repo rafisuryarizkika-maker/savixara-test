@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 260">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0" stop-color="#7C3AED"/><stop offset=".5" stop-color="#2563EB"/><stop offset="1" stop-color="#00D9FF"/></linearGradient></defs>
+<g transform="translate(20,25) scale(.38)">
+<path d="M396 72 L300 86 L122 238 L198 247 L329 139 L280 257 L115 414 L214 402 L397 239 L325 231 Z" fill="url(#g)"/>
+<path d="M122 238 L198 247 L329 139 L300 86 Z" fill="#00D9FF" opacity=".78"/>
+<path d="M115 414 L214 402 L397 239 L325 231 Z" fill="#7C3AED" opacity=".82"/>
+<path d="M174 224 L267 216 L338 155 L319 205 L245 270 L161 279 Z" fill="#0B1020"/>
+<path d="M172 283 L250 274 L328 208 L304 265 L224 331 L145 339 Z" fill="#111827"/>
+</g>
+<text x="225" y="105" font-family="Poppins, Montserrat, Arial, sans-serif" font-size="78" font-weight="800" font-style="italic" letter-spacing="3" fill="#F8FAFC">SAVIXARA</text>
+<text x="229" y="150" font-family="Poppins, Montserrat, Arial, sans-serif" font-size="19" font-weight="500" letter-spacing="5" fill="#94A3B8">TOP UP GAME JADI LEBIH MUDAH</text>
+</svg>

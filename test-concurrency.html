@@ -1,0 +1,261 @@
+
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SAVIXARA — Uji Konkurensi</title>
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 600px;
+      margin: 32px auto;
+      padding: 16px;
+      background: #0b1020;
+      color: #f4f7ff;
+    }
+
+    input, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+    }
+
+    input {
+      background: #172033;
+      color: white;
+      border: 1px solid #39445c;
+    }
+
+    button {
+      background: #3458ee;
+      color: white;
+      border: 0;
+      font-weight: 600;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: #172033;
+      padding: 12px;
+      border-radius: 8px;
+      min-height: 80px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>SAVIXARA — Uji Konkurensi</h1>
+  <p>Lingkungan pengujian terpisah.</p>
+
+  <label for="email">Email admin uji</label>
+  <input
+    id="email"
+    type="email"
+    autocomplete="username"
+  >
+
+  <label for="password">Password admin uji</label>
+  <input
+    id="password"
+    type="password"
+    autocomplete="current-password"
+  >
+
+  <button id="login">Login ke proyek uji</button>
+  <button id="run" disabled>Jalankan uji konkurensi</button>
+  <button id="logout" disabled>Keluar</button>
+
+  <h3>Hasil pengujian</h3>
+  <pre id="result" aria-live="polite">Belum ada pengujian.</pre>
+
+  <script type="module">
+    import { createClient } from
+      "https://esm.sh/@supabase/supabase-js@2";
+
+    // Khusus proyek Supabase pengujian.
+    const URL =
+      "https://bumoiebziefburtmisnn.supabase.co";
+
+    const PUBLISHABLE_KEY =
+      "sb_publishable_2jHWucsQvNqEiLLk9Re3aA_n0JFVr42";
+
+    const supabase = createClient(URL, PUBLISHABLE_KEY);
+
+    const result = document.getElementById("result");
+    const loginButton = document.getElementById("login");
+    const runButton = document.getElementById("run");
+    const logoutButton = document.getElementById("logout");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+
+    // Hasil disimpan sementara di sesi tab; kredensial/token tidak disimpan di sini.
+    const RESULT_STORAGE_KEY = "savixara_concurrency_test_result_v1";
+
+    function readSavedResult() {
+      try { return sessionStorage.getItem(RESULT_STORAGE_KEY); }
+      catch { return null; }
+    }
+
+    function clearSavedResult() {
+      try { sessionStorage.removeItem(RESULT_STORAGE_KEY); } catch {}
+    }
+
+    function show(message, { persist = false } = {}) {
+      result.textContent = message;
+      if (persist) {
+        try { sessionStorage.setItem(RESULT_STORAGE_KEY, message); } catch {}
+      }
+    }
+
+    // Periksa sesi dan perbarui tombol.
+    // showStatus=false mencegah hasil tes tertimpa pesan login.
+    async function refreshSession({ showStatus = true } = {}) {
+      const { data, error } = await supabase.auth.getUser();
+      const isLoggedIn = Boolean(data?.user);
+
+      runButton.disabled = !isLoggedIn;
+      logoutButton.disabled = !isLoggedIn;
+      loginButton.disabled = isLoggedIn;
+
+      if (showStatus) {
+        if (error && !isLoggedIn) {
+          show("Silakan login ke proyek uji.");
+        } else if (isLoggedIn) {
+          show("Login berhasil: " + data.user.email);
+        }
+      }
+
+      return isLoggedIn;
+    }
+
+    // Login ke akun admin proyek pengujian.
+    loginButton.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        show("Masukkan email dan password akun pengujian.");
+        return;
+      }
+
+      loginButton.disabled = true;
+      show("Memeriksa login...");
+
+      try {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+        // Jangan biarkan password tertinggal di kolom.
+        passwordInput.value = "";
+
+        if (error) {
+          show("Login gagal: " + error.message);
+          loginButton.disabled = false;
+          return;
+        }
+
+        await refreshSession();
+      } catch (error) {
+        passwordInput.value = "";
+        loginButton.disabled = false;
+        show("Terjadi kesalahan login: " + error.message);
+      }
+    });
+
+    // Jalankan tes konkurensi di proyek pengujian.
+    runButton.addEventListener("click", async () => {
+      runButton.disabled = true;
+      loginButton.disabled = true;
+      clearSavedResult();
+      show("Menjalankan uji konkurensi. Mohon tunggu...");
+
+      try {
+        const { data, error } = await supabase.functions.invoke(
+          "savixara-concurrency-test-temp",
+          {
+            body: {
+              confirm: "run-concurrency-test"
+            }
+          }
+        );
+
+        if (error) {
+          show(
+            "Permintaan gagal.\n\n" +
+            "Pesan: " + error.message +
+            "\n\nPeriksa log proyek Supabase pengujian jika tersedia.",
+            { persist: true }
+          );
+        } else {
+          // Pertahankan hasil lengkap di layar dan sesi tab.
+          show(JSON.stringify(data, null, 2), { persist: true });
+        }
+      } catch (error) {
+        show(
+          "Terjadi kesalahan saat menjalankan tes:\n" +
+          (error?.message || String(error)),
+          { persist: true }
+        );
+      } finally {
+        // Hanya perbarui sesi dan status tombol.
+        // Jangan timpa JSON atau pesan error di layar.
+        try {
+          await refreshSession({ showStatus: false });
+        } catch {
+          // Hasil tes yang sudah ditampilkan tetap dipertahankan.
+          runButton.disabled = true;
+          loginButton.disabled = false;
+        }
+      }
+    });
+
+    // Keluar dari akun pengujian.
+    logoutButton.addEventListener("click", async () => {
+      logoutButton.disabled = true;
+      runButton.disabled = true;
+
+      try {
+        const { error } = await supabase.auth.signOut();
+
+        if (error) {
+          show("Gagal keluar: " + error.message);
+          await refreshSession({ showStatus: false });
+          return;
+        }
+
+        loginButton.disabled = false;
+        runButton.disabled = true;
+        logoutButton.disabled = true;
+        clearSavedResult();
+        show("Sudah keluar dari sesi pengujian.");
+      } catch (error) {
+        show("Terjadi kesalahan saat keluar: " + error.message);
+        await refreshSession({ showStatus: false });
+      }
+    });
+
+    // Pulihkan hasil terakhir sebelum memeriksa sesi.
+    // Pemeriksaan sesi tidak menimpa hasil tes yang tersimpan.
+    const previousResult = readSavedResult();
+    if (previousResult) result.textContent = previousResult;
+
+    refreshSession({ showStatus: !previousResult }).catch(() => {
+      if (!previousResult) {
+        show("Sesi belum tersedia. Silakan login ke proyek uji.");
+      }
+    });
+  </script>
+</body>
+</html>

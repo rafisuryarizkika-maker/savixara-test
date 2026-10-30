@@ -1,0 +1,2932 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+/* =====================================================
+   SAVIXARA — GLOBAL DESIGN SYSTEM
+===================================================== */
+
+:root {
+  --primary: #7C3AED;
+  --secondary: #2563EB;
+  --accent: #00D9FF;
+
+  --bg: #080A12;
+  --surface: #111522;
+  --card: #171B2A;
+  --card-hover: #1C2235;
+
+  --text: #F8FAFC;
+  --muted: #94A3B8;
+
+  --line: rgba(148, 163, 184, 0.16);
+  --success: #10B981;
+  --danger: #F87171;
+
+  --radius: 20px;
+  --gradient: linear-gradient(135deg, #7C3AED, #2563EB);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Poppins', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+.app {
+  min-height: 100vh;
+  overflow: clip;
+  background:
+    radial-gradient(
+      circle at 85% 12%,
+      rgba(124, 58, 237, 0.12),
+      transparent 25%
+    ),
+    var(--bg);
+}
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+
+.navbar {
+  height: 78px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  display: flex;
+  align-items: center;
+  gap: 28px;
+
+  padding: 0 clamp(16px, 4vw, 64px);
+
+  background: rgba(8, 10, 18, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+
+.brand img {
+  display: block;
+  width: 155px;
+  height: auto;
+}
+
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex: 1;
+
+  color: #DBE3EF;
+  font-size: 12px;
+}
+
+.desktop-nav a {
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.desktop-nav a:hover {
+  color: var(--accent);
+}
+
+.desktop-nav a span {
+  margin-left: 5px;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn,
+.cart-btn,
+.menu-btn {
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid var(--line);
+  border-radius: 13px;
+
+  background: rgba(255, 255, 255, 0.03);
+  color: white;
+
+  transition: background 0.2s, border-color 0.2s;
+}
+.icon-btn:hover,
+.cart-btn:hover,
+.menu-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.locale {
+  height: 42px;
+  padding: 0 12px;
+
+  border: 1px solid var(--line);
+  border-radius: 13px;
+
+  background: rgba(255, 255, 255, 0.03);
+  color: white;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.locale:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.locale-arrow {
+  margin-left: 5px;
+}
+
+.login-btn,
+.drawer-login {
+  padding: 11px 18px;
+
+  border: 0;
+  border-radius: 12px;
+
+  background: var(--gradient);
+  color: white;
+  font-weight: 600;
+  font-size: 12px;
+
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.login-btn:hover,
+.drawer-login:hover {
+  transform: translateY(-2px);
+}
+
+.menu-btn {
+  display: none;
+}
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.hero {
+  position: relative;
+  min-height: 575px;
+  overflow: hidden;
+
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  align-items: center;
+
+  padding: 65px clamp(20px, 7vw, 110px);
+
+  border-bottom: 1px solid var(--line);
+
+  background:
+    radial-gradient(
+      circle at 78% 50%,
+      rgba(124, 58, 237, 0.28),
+      transparent 38%
+    ),
+    linear-gradient(110deg, #090B14 20%, #10122A 100%);
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 3;
+  max-width: 700px;
+}
+
+.eyebrow,
+.section-kicker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #BBA6FF;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+}
+
+.hero h1 {
+  margin: 18px 0;
+  font-size: clamp(38px, 5vw, 68px);
+  line-height: 1.08;
+  letter-spacing: -1.8px;
+  overflow-wrap: anywhere;
+}
+
+.hero h1 span {
+  color: transparent;
+  background: linear-gradient(90deg, #A78BFA, #00D9FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.hero p {
+  max-width: 590px;
+  margin: 0 0 26px;
+
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.search-box {
+  width: 100%;
+  max-width: 620px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 7px 8px 7px 16px;
+
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 16px;
+
+  background: #0E1320;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+.search-box > svg {
+  flex: none;
+  color: #A8B4C8;
+}
+
+.search-box input {
+  flex: 1;
+  min-width: 0;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+  color: white;
+}
+
+.search-box input::placeholder {
+  color: #718096;
+}
+
+.search-box button {
+  width: 44px;
+  height: 44px;
+  flex: none;
+
+  display: grid;
+  place-items: center;
+
+  border: 0;
+  border-radius: 13px;
+
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+}
+
+/* =====================================================
+   TRUST
+===================================================== */
+
+.trust-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+
+  margin-top: 28px;
+}
+
+.trust-row > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  min-width: 0;
+}
+
+.trust-row svg {
+  flex: none;
+  color: var(--accent);
+}
+
+.trust-row b {
+  display: block;
+  font-size: 11px;
+}
+
+.trust-row small {
+  display: block;
+  margin-top: 3px;
+  color: #718096;
+  font-size: 9px;
+}
+
+/* =====================================================
+   HERO ART
+===================================================== */
+
+.hero-art {
+  position: relative;
+  min-height: 450px;
+  height: 100%;
+
+  display: grid;
+  place-items: center;
+}
+
+.character-ring {
+  width: min(410px, 38vw);
+  aspect-ratio: 1;
+
+  border: 1px solid rgba(0, 217, 255, 0.18);
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(0, 217, 255, 0.15),
+      rgba(124, 58, 237, 0.15) 42%,
+      transparent 67%
+    );
+
+  box-shadow: 0 0 90px rgba(124, 58, 237, 0.25);
+}
+
+.character-core {
+  position: absolute;
+  z-index: 3;
+
+  width: 180px;
+  height: 180px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    var(--secondary),
+    var(--accent)
+  );
+
+  color: white;
+  font-size: 120px;
+  font-weight: 800;
+  font-style: italic;
+
+  box-shadow: 0 0 80px rgba(0, 217, 255, 0.25);
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.orb-1 {
+  top: 10%;
+  left: 12%;
+  width: 170px;
+  height: 170px;
+  background: rgba(124, 58, 237, 0.18);
+}
+
+.orb-2 {
+  right: 7%;
+  bottom: 8%;
+  width: 130px;
+  height: 130px;
+  background: rgba(0, 217, 255, 0.13);
+}
+
+.hero-chip {
+  position: absolute;
+  z-index: 4;
+
+  padding: 10px 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+
+  background: rgba(17, 21, 34, 0.85);
+  backdrop-filter: blur(12px);
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.chip-1 {
+  left: 10%;
+  bottom: 22%;
+  color: #C4B5FD;
+}
+
+.chip-2 {
+  top: 22%;
+  right: 8%;
+  color: #67E8F9;
+}
+
+/* =====================================================
+   GENERAL SECTIONS
+===================================================== */
+
+.section {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  padding: 72px clamp(18px, 5vw, 70px);
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+
+  margin-bottom: 28px;
+}
+
+.section-head h2 {
+  margin: 8px 0 4px;
+  font-size: 27px;
+  line-height: 1.3;
+}
+
+.section-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.outline-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 11px 15px;
+
+  border: 1px solid var(--line);
+  border-radius: 13px;
+
+  background: rgba(255, 255, 255, 0.02);
+  color: #DCE6F4;
+
+  white-space: nowrap;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.outline-btn:hover {
+  border-color: rgba(0, 217, 255, 0.4);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* =====================================================
+   GAME CARDS
+===================================================== */
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.game-card {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+
+  border: 1px solid var(--line);
+  border-radius: 19px;
+
+  background: var(--card);
+  color: white;
+  text-align: left;
+
+  transition: transform 0.22s, border-color 0.22s;
+}
+
+.game-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 217, 255, 0.4);
+}
+
+.cover {
+  position: relative;
+  height: 150px;
+  overflow: hidden;
+
+  display: grid;
+  place-items: center;
+
+  background: linear-gradient(135deg, #19122E, #151A3B);
+}
+
+.cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+
+  background:
+    radial-gradient(
+      circle at 65% 25%,
+      rgba(0, 217, 255, 0.4),
+      transparent 27%
+    ),
+    radial-gradient(
+      circle at 30% 70%,
+      rgba(124, 58, 237, 0.5),
+      transparent 38%
+    );
+}
+
+.game-cover-image {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.game-cover-fallback {
+  position: relative;
+  z-index: 1;
+
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.game-icon {
+  width: 65px;
+  height: 65px;
+  object-fit: contain;
+}
+
+.cover-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+
+  background: linear-gradient(
+    180deg,
+    rgba(8, 10, 18, 0.12),
+    rgba(8, 10, 18, 0.1) 45%,
+    rgba(8, 10, 18, 0.35)
+  );
+}
+
+.game-tag,
+.game-status {
+  position: absolute;
+  z-index: 3;
+
+  padding: 5px 8px;
+  border-radius: 8px;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.game-tag {
+  top: 10px;
+  left: 10px;
+
+  background: rgba(8, 10, 18, 0.65);
+  color: white;
+}
+
+.game-status {
+  right: 8px;
+  bottom: 8px;
+
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #6EE7B7;
+}
+
+.game-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  padding: 13px;
+}
+
+.game-info {
+  min-width: 0;
+}
+
+.game-info b {
+  display: block;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.game-info small {
+  display: block;
+  margin-top: 4px;
+  color: #718096;
+  font-size: 10px;
+}
+
+.game-arrow {
+  display: grid;
+  place-items: center;
+  flex: none;
+  color: #DCE6F4;
+}
+
+.game-card.ff .cover {
+  background: linear-gradient(135deg, #291B0A, #3B1814);
+}
+
+.game-card.pubg .cover {
+  background: linear-gradient(135deg, #1F1D13, #171A20);
+}
+
+.game-card.roblox .cover {
+  background: linear-gradient(135deg, #151D35, #1A1130);
+}
+
+.game-card.hok .cover {
+  background: linear-gradient(135deg, #112B35, #1D1540);
+}
+
+.game-card.genshin .cover {
+  background: linear-gradient(135deg, #14294A, #321B55);
+}
+
+/* =====================================================
+   FEATURE CARDS
+===================================================== */
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.feature-card {
+  position: relative;
+  min-height: 190px;
+  overflow: hidden;
+
+  display: flex;
+  align-items: flex-end;
+
+  border: 1px solid var(--line);
+  border-radius: 20px;
+
+  background: var(--surface);
+}
+
+.feature-card.blue {
+  background: linear-gradient(110deg, #101B36, #111522);
+}
+
+.feature-card.purple {
+  background: linear-gradient(110deg, #211436, #111522);
+}
+
+.feature-card.cyan {
+  background: linear-gradient(110deg, #092C36, #111522);
+}
+
+.feature-art {
+  position: absolute;
+  inset: 0 0 0 42%;
+
+  display: grid;
+  place-items: center;
+
+  opacity: 0.8;
+}
+
+.feature-art::before {
+  content: '';
+  position: absolute;
+
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+
+  background: radial-gradient(
+    circle,
+    rgba(37, 99, 235, 0.45),
+    transparent 68%
+  );
+}
+
+.feature-card.purple .feature-art::before {
+  background: radial-gradient(
+    circle,
+    rgba(124, 58, 237, 0.5),
+    transparent 68%
+  );
+}
+
+.feature-card.cyan .feature-art::before {
+  background: radial-gradient(
+    circle,
+    rgba(0, 217, 255, 0.35),
+    transparent 68%
+  );
+}
+
+.feature-art svg {
+  position: relative;
+  color: #E2E8F0;
+}
+
+.feature-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 70%;
+  padding: 24px;
+}
+
+.feature-copy > b {
+  display: block;
+  font-size: 17px;
+}
+
+.feature-copy > span {
+  display: block;
+  margin: 5px 0 14px;
+  color: #AAB5C6;
+  font-size: 11px;
+}
+
+.feature-copy button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 9px 12px;
+
+  border: 1px solid var(--line);
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  font-size: 11px;
+}
+
+/* =====================================================
+   PROMO CARDS
+===================================================== */
+
+.promo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.promo-card {
+  position: relative;
+  min-width: 0;
+  min-height: 175px;
+  padding: 0;
+  overflow: hidden;
+
+  border: 1px solid var(--line);
+  border-radius: 18px;
+
+  background: var(--card);
+  color: white;
+  text-align: left;
+}
+
+.promo-art {
+  height: 95px;
+
+  display: grid;
+  place-items: center;
+
+  background:
+    radial-gradient(
+      circle at 70% 30%,
+      rgba(0, 217, 255, 0.4),
+      transparent 30%
+    ),
+    linear-gradient(120deg, #22104D, #12214A);
+}
+
+.promo2 .promo-art {
+  background: linear-gradient(120deg, #17254A, #35145D);
+}
+
+.promo3 .promo-art {
+  background: linear-gradient(120deg, #112B35, #17204C);
+}
+
+.promo4 .promo-art {
+  background: linear-gradient(120deg, #42171A, #312018);
+}
+
+.promo-card > div:last-child {
+  padding: 12px;
+}
+
+.promo-card b {
+  display: block;
+  font-size: 12px;
+}
+
+.promo-card span {
+  display: block;
+  margin: 4px 0 8px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.promo-card em {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  color: #67E8F9;
+  font-size: 9px;
+  font-style: normal;
+}
+
+/* =====================================================
+   GAMING SERVICES
+===================================================== */
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.service-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 16px;
+
+  border: 1px solid var(--line);
+  border-radius: 16px;
+
+  background: var(--card);
+  color: white;
+  text-align: left;
+
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.service-card:hover {
+  border-color: rgba(124, 58, 237, 0.55);
+  background: var(--card-hover);
+}
+
+.service-icon {
+  width: 46px;
+  height: 46px;
+  flex: none;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 14px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(124, 58, 237, 0.28),
+    rgba(0, 217, 255, 0.15)
+  );
+
+  color: #BFA9FF;
+}
+
+.service-card > div:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+
+.service-card b {
+  display: block;
+  font-size: 12px;
+}
+
+.service-card span {
+  display: block;
+  margin-top: 4px;
+  color: #718096;
+  font-size: 10px;
+}
+
+/* =====================================================
+   INFO CARDS
+===================================================== */
+
+.info-section {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.info-card {
+  padding: 25px;
+
+  border: 1px solid var(--line);
+  border-radius: 20px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(17, 21, 34, 0.95),
+    rgba(12, 15, 26, 0.95)
+  );
+}
+
+.info-card > svg {
+  color: #67E8F9;
+}
+
+.info-card h3 {
+  margin: 16px 0 7px;
+  font-size: 17px;
+}
+
+.info-card p {
+  min-height: 58px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.info-card button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+  color: #C4B5FD;
+  font-size: 11px;
+}
+
+/* =====================================================
+   FAQ / CUSTOMER SERVICE
+===================================================== */
+
+.faq {
+  max-width: 1000px;
+  text-align: center;
+}
+
+.faq .section-kicker {
+  justify-content: center;
+}
+
+.faq h2 {
+  margin: 12px 0 8px;
+  font-size: 30px;
+}
+
+.faq > p {
+  max-width: 650px;
+  margin: 0 auto;
+
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+.faq-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin-top: 22px;
+}
+
+.faq-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  padding: 12px 16px;
+
+  border: 0;
+  border-radius: 12px;
+
+  background: var(--gradient);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.faq-actions .whatsapp {
+  background: #0F766E;
+}
+
+
+/* FAQ - ikon plus dan minus */
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-toggle {
+  flex-shrink: 0;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.faq-item[open] .faq-toggle {
+  font-size: 0;
+}
+
+.faq-item[open] .faq-toggle::after {
+  content: "−";
+  font-size: 22px;
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer {
+  padding: 50px clamp(18px, 5vw, 70px) 22px;
+
+  border-top: 1px solid var(--line);
+  background: #05070D;
+}
+
+.footer-top {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 1.6fr repeat(5, minmax(0, 1fr));
+  gap: 25px;
+}
+
+.footer-brand img {
+  width: 160px;
+  height: auto;
+}
+
+.footer-brand p {
+  max-width: 330px;
+  color: #718096;
+  font-size: 11px;
+  line-height: 1.9;
+}
+
+.footer-col h4 {
+  margin: 0 0 14px;
+  color: #F8FAFC;
+  font-size: 11px;
+}
+
+.footer-col a {
+  display: block;
+  margin: 9px 0;
+
+  color: #718096;
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.footer-col a:hover {
+  color: #C4B5FD;
+}
+
+.footer-bottom {
+  width: 100%;
+  max-width: 1400px;
+  margin: 40px auto 0;
+  padding-top: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  border-top: 1px solid var(--line);
+  color: #64748B;
+  font-size: 9px;
+}
+
+/* =====================================================
+   FLOATING WHATSAPP
+===================================================== */
+
+.float-wa {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 40;
+
+  width: 56px;
+  height: 56px;
+
+  display: grid;
+  place-items: center;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #10B981;
+  color: white;
+
+  box-shadow: 0 12px 35px rgba(16, 185, 129, 0.3);
+  transition: transform 0.2s;
+}
+
+.float-wa:hover {
+  transform: translateY(-3px);
+}
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 120;
+
+  width: max-content;
+  max-width: calc(100vw - 32px);
+
+  padding: 12px 16px;
+
+  transform: translateX(-50%);
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 13px;
+
+  background: #171B2A;
+  color: white;
+
+  font-size: 11px;
+  line-height: 1.7;
+
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* =====================================================
+   MOBILE DRAWER
+===================================================== */
+
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(3px);
+}
+
+.drawer {
+  width: min(330px, 88vw);
+  height: 100%;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 18px;
+
+  border-right: 1px solid var(--line);
+  background: #0A0D16;
+}
+
+.drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  margin-bottom: 22px;
+}
+
+.drawer-head img {
+  width: 140px;
+}
+
+.drawer a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 14px 4px;
+
+  border-bottom: 1px solid var(--line);
+
+  color: #DBE4F1;
+  font-size: 12px;
+}
+
+.drawer a:hover {
+  color: var(--accent);
+}
+
+.drawer-login {
+  margin-top: 24px;
+  flex: none;
+}
+
+/* =====================================================
+   TOP UP PAGE
+===================================================== */
+
+.topup-page {
+  max-width: 1250px;
+  min-height: 65vh;
+}
+
+.topup-page > .outline-btn {
+  margin-bottom: 30px;
+}
+
+.topup-header {
+  margin-bottom: 32px;
+}
+
+.topup-header .section-kicker {
+  margin-bottom: 12px;
+}
+
+.topup-header h1 {
+  margin: 12px 0;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.topup-header p {
+  max-width: 720px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.topup-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.8fr);
+  align-items: start;
+  gap: 22px;
+}
+
+.topup-products,
+.topup-sidebar {
+  min-width: 0;
+}
+
+.topup-sidebar {
+  display: grid;
+  gap: 18px;
+}
+
+.topup-card {
+  min-width: 0;
+  padding: 22px;
+
+  border: 1px solid var(--line);
+  border-radius: 20px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(23, 27, 42, 0.98),
+    rgba(14, 18, 31, 0.98)
+  );
+
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.topup-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+
+  margin-bottom: 22px;
+}
+
+.topup-card-head > svg {
+  flex: none;
+  color: var(--accent);
+}
+
+.topup-label {
+  display: block;
+  margin-bottom: 8px;
+
+  color: #BBA6FF;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+}
+
+.topup-card h2 {
+  margin: 0;
+  font-size: 21px;
+  line-height: 1.4;
+}
+
+.topup-card-head p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+/* =====================================================
+   PRODUCT OPTIONS — DARK THEME FIX
+===================================================== */
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.product-option {
+  position: relative;
+  min-width: 0;
+  min-height: 112px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 13px;
+
+  padding: 15px;
+
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 15px;
+
+  background: #101522;
+  color: var(--text);
+  text-align: left;
+
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.product-option:hover {
+  border-color: rgba(124, 58, 237, 0.7);
+  background: #17182D;
+  transform: translateY(-2px);
+}
+
+  .game-grid {
+    gap: 8px;
+  }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* FIX KARTU GAME UNTUK LAYAR HP */
+@media (max-width: 600px) {
+  .game-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .game-card {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .game-meta {
+    min-width: 0;
+  }
+
+  .game-info {
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  .game-info b {
+    display: block;
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  .game-info small {
+    display: block;
+    font-size: 11px;
+    line-height: 1.5;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+}
+/* =====================================
+   SAVIXARA - MOBILE RESPONSIVE REPAIR
+   ===================================== */
+
+@media (max-width: 760px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .navbar {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px 15px;
+    gap: 12px;
+  }
+
+  .brand {
+    flex-shrink: 0;
+  }
+
+  .brand img {
+    width: 125px;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .desktop-nav {
+    display: none !important;
+  }
+
+  .nav-actions {
+    margin-left: auto;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .menu-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .locale {
+  display: flex !important;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.login-btn,
+.cart-btn {
+  display: none !important;
+}
+
+  .hero,
+  .section,
+  .info-section,
+  .faq-section {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .hero {
+    min-width: 0;
+  }
+
+  .hero-copy {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .hero h1 {
+    font-size: clamp(32px, 8vw, 42px);
+    line-height: 1.15;
+    overflow-wrap: break-word;
+  }
+
+  .search-box {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .trust-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 12px;
+    width: 100%;
+  }
+
+  .trust-row > * {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .game-grid,
+  .promo-grid,
+  .service-grid,
+  .feature-grid,
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .game-card,
+  .promo-card,
+  .service-card,
+  .feature-card,
+  .info-card {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .game-info,
+  .promo-card *,
+  .service-card *,
+  .feature-card *,
+  .info-card * {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .game-info b,
+  .game-info small {
+    white-space: normal;
+    word-break: normal;
+  }
+
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .section-head > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .section-head h2 {
+    font-size: clamp(24px, 6vw, 32px);
+  }
+
+  .footer,
+  .footer-top,
+  .footer-bottom {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 14px;
+  }
+
+  .footer-top > * {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .footer a {
+    overflow-wrap: anywhere;
+  }
+
+  .drawer {
+    width: min(330px, 88vw);
+    max-width: 88vw;
+  }
+}
+
+@media (max-width: 430px) {
+  .navbar {
+    padding: 10px 12px;
+  }
+
+  .brand img {
+  width: 150px;
+  height: auto;
+  max-width: 100%;
+  }
+
+  .hero,
+  .section,
+  .info-section,
+  .faq-section {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .trust-row {
+    gap: 14px 10px;
+  }
+
+  .game-grid,
+  .promo-grid,
+  .service-grid,
+  .feature-grid,
+  .info-grid {
+    gap: 10px;
+  }
+
+  .footer-top {
+    gap: 18px 10px;
+  }
+   }
+
+/* PERBAIKAN POSISI ILUSTRASI HERO HP */
+@media (max-width: 760px) {
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 12px;
+    padding: 20px 15px 42px;
+    min-height: 0;
+  }
+
+  .hero-art {
+    grid-row: 1;
+    width: 100%;
+    height: 320px;
+    min-height: 320px;
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+
+  .character-placeholder {
+    position: relative;
+    width: min(300px, 78vw);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+  }
+
+  .character-ring {
+    width: 100%;
+    height: 100%;
+  }
+
+  .character-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 130px;
+    height: 130px;
+    font-size: 88px;
+  }
+
+  .hero-copy {
+    grid-row: 2;
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* SAVIXARA - FINAL SECTION LAYOUT FIX */
+
+.info-section {
+  display: block;
+}
+
+.info-section > .section-head {
+  display: flex;
+  width: 100%;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 12px;
+  min-width: 0;
+  min-height: 170px;
+  padding: 22px;
+  background: linear-gradient(145deg, #171B2A, #111522);
+}
+
+.feature-icon,
+.service-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: rgba(124, 58, 237, 0.2);
+  color: #00D9FF;
+}
+
+.feature-card h3,
+.service-card h3,
+.promo-card h3 {
+  margin: 0;
+  color: #F8FAFC;
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.feature-card p,
+.service-card p,
+.promo-card p {
+  margin: 0;
+  color: #94A3B8;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.promo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.promo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  min-height: 190px;
+  padding: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  background: linear-gradient(145deg, #171B2A, #111522);
+  color: #F8FAFC;
+}
+
+.promo-label {
+  color: #00D9FF;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.promo-card button,
+.service-card button,
+.info-card button,
+.faq-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 10px 13px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 11px;
+  background: linear-gradient(135deg, #7C3AED, #2563EB);
+  color: #FFFFFF;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.service-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 13px;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  background: #111522;
+  color: #F8FAFC;
+}
+
+.info-card {
+  min-width: 0;
+  background: linear-gradient(145deg, #171B2A, #111522);
+}
+
+.info-card p {
+  min-height: 0;
+}
+
+.faq-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.faq-actions .whatsapp {
+  background: #111522;
+  border-color: rgba(0, 217, 255, 0.35);
+}
+
+.footer-col button {
+  display: block;
+  width: 100%;
+  margin: 9px 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #94A3B8;
+  text-align: left;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.footer-col button:hover {
+  color: #00D9FF;
+}
+
+@media (max-width: 760px) {
+  .feature-grid,
+  .service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .promo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-card,
+  .service-card,
+  .promo-card,
+  .info-card {
+    padding: 15px;
+  }
+
+  .footer-top {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 430px) {
+  .feature-grid,
+  .service-grid,
+  .promo-grid {
+    grid-template-columns: 1fr;
+  }
+   }
+/* TOP UP MOBILE - FIX UTAMA */
+@media screen and (max-width: 760px) {
+  .topup-page,
+  .topup-layout,
+  .topup-products,
+  .topup-sidebar,
+  .topup-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .topup-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .topup-sidebar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .product-option {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .product-option strong,
+  .product-option small {
+    display: block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .form-group,
+  .form-group input {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .form-group input {
+    background: #0E1320 !important;
+    color: #F8FAFC !important;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 12px;
+    padding: 13px;
+  }
+
+  .summary-row,
+  .summary-total {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .summary-row strong,
+  .summary-total strong {
+    max-width: 65%;
+    overflow-wrap: anywhere;
+    text-align: right;
+  }
+
+  .checkout-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #7C3AED, #2563EB) !important;
+    color: #FFFFFF !important;
+    border: 0;
+    border-radius: 12px;
+  }
+}
+
+/* Tombol Lihat Semua - gaya premium */
+.view-all,
+.view-all-btn,
+.see-all-btn {
+  background: transparent !important;
+  color: #00D9FF !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 8px 0 !important;
+  font-weight: 600;
+}
+
+.view-all:hover,
+.view-all-btn:hover,
+.see-all-btn:hover {
+  background: transparent !important;
+  color: #7C3AED !important;
+}
+/* FIX TOMBOL LIHAT SEMUA SAVIXARA */
+.section-head .text-link {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #00D9FF !important;
+  box-shadow: none !important;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.section-head .text-link:hover {
+  background: transparent !important;
+  color: #A78BFA !important;
+  box-shadow: none !important;
+}
+
+.section-head .text-link svg {
+  color: #00D9FF;
+  flex-shrink: 0;
+}
+/* SAVIXARA - Rapikan status katalog game */
+#games .section-head {
+  margin-bottom: 18px;
+}
+
+#games .catalog-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 16px;
+  padding: 8px 11px;
+  border: 1px solid rgba(0, 217, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(0, 217, 255, 0.045);
+  color: #94A3B8;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+#games .catalog-note svg {
+  flex-shrink: 0;
+  color: #00D9FF;
+}
+
+#games .game-grid {
+  margin-top: 0;
+}
+
+@media (max-width: 430px) {
+  #games .section-head {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  #games .catalog-note {
+    margin-bottom: 14px;
+    font-size: 11px;
+  }
+}
+/* SAVIXARA - Polesan kartu game dan WhatsApp */
+
+/* Efek kartu game */
+.game-card {
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.game-card:active {
+  transform: scale(0.985);
+  border-color: rgba(0, 217, 255, 0.55);
+}
+
+/* Area gambar tetap rapi */
+.game-card .cover {
+  position: relative;
+  overflow: hidden;
+}
+
+.game-card .game-cover-image {
+  transition: transform 0.3s ease;
+}
+
+@media (hover: hover) {
+  .game-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(0, 217, 255, 0.45);
+    box-shadow: 0 10px 28px rgba(0, 217, 255, 0.07);
+  }
+
+  .game-card:hover .game-cover-image {
+    transform: scale(1.035);
+  }
+}
+
+/* Tombol WhatsApp lebih proporsional di HP */
+@media (max-width: 600px) {
+  .float-wa {
+    width: 50px;
+    height: 50px;
+    right: 12px;
+    bottom: 14px;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
+  }
+
+  .float-wa svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+/* SAVIXARA - Final polish footer mobile */
+@media (max-width: 600px) {
+  .footer-trust {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .footer-trust > div {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .footer-trust > div span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .footer-social .social-links {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .footer-social .social-links button {
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .footer-social > p {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+}
+/* SAVIXARA - Perapian akhir footer HP */
+@media (max-width: 600px) {
+  .footer-trust {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 10px;
+  }
+
+  .footer-trust > div {
+    gap: 6px;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .footer-trust > div svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .footer-social .social-links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .footer-social .social-links button {
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .footer-social .footer-help {
+    margin-top: 12px;
+  }
+}
+/* SAVIXARA - Footer bottom mobile fix */
+@media (max-width: 600px) {
+  .footer-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-right: 56px;
+  }
+
+  .footer-bottom span {
+    display: block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    line-height: 1.7;
+  }
+
+  .footer-social .footer-help {
+    margin-bottom: 10px;
+  }
+}
+/* SAVIXARA - FAQ Accordion Premium */
+.faq-section {
+  max-width: 1000px;
+}
+
+.faq-content {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.faq-content .section-kicker {
+  margin-bottom: 12px;
+}
+
+.faq-content h2 {
+  margin: 10px 0;
+  color: #F8FAFC;
+  font-size: clamp(26px, 5vw, 34px);
+  line-height: 1.3;
+}
+
+.faq-intro {
+  margin: 0 0 24px;
+  color: #94A3B8;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.faq-list {
+  display: grid;
+  gap: 12px;
+}
+
+.faq-item {
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 15px;
+  background: linear-gradient(145deg, #171B2A, #111522);
+  transition: border-color 0.2s ease;
+}
+
+.faq-item[open] {
+  border-color: rgba(0, 217, 255, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 217, 255, 0.05);
+}
+
+.faq-item summary {
+  position: relative;
+  padding: 17px 48px 17px 18px;
+  color: #F8FAFC;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+  list-style: none;
+  cursor: pointer;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: '+';
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #00D9FF;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.faq-item[open] summary::after {
+  content: '−';
+}
+
+.faq-item p {
+  margin: 0;
+  padding: 0 18px 18px;
+  color: #94A3B8;
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+@media (max-width: 600px) {
+  .faq-section {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+
+  .faq-content h2 {
+    font-size: 25px;
+  }
+
+  .faq-item summary {
+    padding: 15px 44px 15px 14px;
+    font-size: 13px;
+  }
+
+  .faq-item summary::after {
+    right: 14px;
+  }
+
+  .faq-item p {
+    padding: 0 14px 15px;
+    font-size: 12px;
+  }
+}
+/* FIX FAQ SAVIXARA - OVERRIDE */
+.faq-list .faq-item {
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 15px;
+  background: linear-gradient(145deg, #171B2A, #111522);
+}
+
+.faq-list .faq-question {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  min-height: 66px;
+  margin: 0;
+  padding: 17px 18px;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #F8FAFC !important;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+  text-align: left;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.faq-list .faq-question span:first-child {
+  flex: 1;
+}
+
+.faq-list .faq-question .faq-icon {
+  flex: 0 0 24px;
+  color: #00D9FF !important;
+  font-size: 24px;
+  text-align: center;
+}
+
+.faq-list .faq-item .faq-answer {
+  margin: 0;
+  padding: 0 18px 18px;
+  color: #94A3B8 !important;
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+.faq-list .faq-item:has(.faq-answer) {
+  border-color: rgba(0, 217, 255, 0.45);
+}
+
+@media (max-width: 600px) {
+  .faq-list .faq-question {
+    min-height: 64px;
+    padding: 15px 14px;
+    font-size: 13px;
+  }
+
+  .faq-list .faq-item .faq-answer {
+    padding: 0 14px 15px;
+  }
+}
+/* ========================================
+   SAVIXARA AUTH MODAL
+======================================== */
+
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(3, 8, 20, 0.82);
+  backdrop-filter: blur(8px);
+  overflow-y: auto;
+}
+
+.auth-modal {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  padding: 34px 28px 28px;
+  border: 1px solid rgba(0, 153, 255, 0.3);
+  border-radius: 22px;
+  background: linear-gradient(145deg, #171b2a, #111522);
+  color: #f8fafc;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.auth-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #f8fafc;
+  cursor: pointer;
+}
+
+.auth-brand {
+  margin-bottom: 18px;
+  color: #00a3ff;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.auth-modal h2 {
+  margin: 0 0 10px;
+  font-size: 25px;
+  line-height: 1.3;
+}
+
+.auth-description {
+  margin: 0 0 26px;
+  color: #94a3b8;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.auth-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.auth-modal form label {
+  margin-top: 8px;
+  color: #dbeafe;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.auth-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 13px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 12px;
+  background: #0c1120;
+  color: #94a3b8;
+}
+
+.auth-input-wrap:focus-within {
+  border-color: #0099ff;
+  box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.12);
+}
+
+.auth-input-wrap input {
+  width: 100%;
+  min-width: 0;
+  padding: 13px 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #f8fafc;
+  font: inherit;
+  font-size: 14px;
+}
+
+.auth-input-wrap input::placeholder {
+  color: #64748b;
+}
+
+.auth-password-toggle {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  padding: 5px;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.auth-submit {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(100deg, #007bff, #00b7ff);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.auth-message {
+  margin: 8px 0 0;
+  color: #7dd3fc;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.auth-switch {
+  margin: 22px 0 0;
+  color: #94a3b8;
+  font-size: 13px;
+  text-align: center;
+}
+
+.auth-switch button {
+  padding: 4px;
+  border: none;
+  background: transparent;
+  color: #38bdf8;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .auth-overlay {
+    padding: 14px;
+  }
+
+  .auth-modal {
+    padding: 30px 20px 24px;
+    border-radius: 18px;
+  }
+
+  .auth-modal h2 {
+    font-size: 22px;
+  }
+}
+
+/* PROFIL AKUN SAVIXARA */
+.profile-email {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  margin: 8px 0 12px;
+  color: #dbeafe;
+  background: #111827;
+  border: 1px solid #263449;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* RAPikan profil akun di menu HP */
+.profile-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 0 4px;
+}
+
+.profile-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 2px;
+}
+
+.profile-avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #2563eb);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.profile-info strong {
+  color: #ffffff;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.profile-info span {
+  color: #aab5c6;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.profile-menu .profile-email {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.profile-menu .drawer-login {
+  width: 100%;
+  min-height: 48px;
+  box-sizing: border-box;
+  margin-top: 2px;
+}
+/* Perbaikan tombol Jelajahi Game di bagian promo */
+.promo-content .btn-primary {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+padding: 12px 18px;
+min-height: 48px;
+border: none;
+border-radius: 12px;
+background: var(--gradient);
+color: #ffffff;
+font-size: 15px;
+font-weight: 600;
+line-height: 1.4;
+white-space: nowrap;
+cursor: pointer;
+}
+
+.promo-content .btn-primary svg {
+flex-shrink: 0;
+width: 18px;
+height: 18px;
+}
+
+@media (max-width: 480px) {
+.promo-content .btn-primary {
+padding: 11px 16px;
+font-size: 14px;
+}
+}
+
+/* SAVIXARA ADMIN PANEL - RESPONSIVE FIX */
+
+.admin-page {
+width: min(100% - 32px, 1100px);
+margin: 32px auto;
+color: var(--text);
+min-width: 0;
+}
+
+.admin-page button,
+.admin-page input,
+.admin-page textarea,
+.admin-page select {
+max-width: 100%;
+font: inherit;
+}
+
+.admin-page button {
+cursor: pointer;
+}
+
+.admin-page > button {
+padding: 12px 18px;
+margin-bottom: 24px;
+color: var(--text);
+background: var(--surface);
+border: 1px solid var(--line);
+border-radius: 12px;
+}
+
+.admin-heading {
+margin: 24px 0;
+}
+
+.admin-heading h1 {
+margin: 12px 0;
+font-size: clamp(28px, 5vw, 42px);
+line-height: 1.2;
+}
+
+.admin-heading p {
+line-height: 1.7;
+}
+
+.admin-panel {
+margin: 24px 0;
+padding: clamp(16px, 3vw, 28px);
+background: var(--surface);
+border: 1px solid var(--line);
+border-radius: 20px;
+min-width: 0;
+}
+
+.admin-panel h2 {
+margin-top: 0;
+margin-bottom: 24px;
+}
+
+.admin-form {
+display: grid;
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 18px;
+}
+
+.admin-form label {
+display: flex;
+flex-direction: column;
+gap: 8px;
+min-width: 0;
+line-height: 1.5;
+}
+
+.admin-form input,
+.admin-form textarea,
+.admin-form select {
+width: 100%;
+min-width: 0;
+padding: 12px 14px;
+color: var(--text);
+background: var(--bg);
+border: 1px solid var(--line);
+border-radius: 10px;
+box-sizing: border-box;
+}
+
+.admin-form textarea {
+min-height: 120px;
+resize: vertical;
+}
+
+.admin-form input[type="checkbox"] {
+width: 20px;
+height: 20px;
+}
+
+.admin-form button {
+width: 100%;
+padding: 14px;
+color: white;
+background: var(--gradient);
+border: 0;
+border-radius: 12px;
+font-weight: 700;
+}
+
+.admin-message {
+padding: 14px 16px;
+margin: 16px 0;
+overflow-wrap: anywhere;
+background: var(--bg);
+border: 1px solid var(--line);
+border-radius: 12px;
+}
+
+@media (max-width: 640px) {
+.admin-page {
+width: calc(100% - 24px);
+margin: 20px auto;
+}
+
+.admin-form {
+grid-template-columns: minmax(0, 1fr);
+}
+
+.admin-panel {
+padding: 16px;
+border-radius: 14px;
+}
+
+.admin-heading h1 {
+font-size: 30px;
+}
+}
