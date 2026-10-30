@@ -182,7 +182,7 @@ async function loadProducts() {
     event.preventDefault();
     setMessage('');
 
-    if (!/^\\d{6}$/.test(mfaCode)) {
+    if (!/^\d{6}$/.test(mfaCode)) {
       setMessage('Masukkan kode autentikator 6 digit.');
       return;
     }
@@ -782,7 +782,7 @@ async function loadProducts() {
               pattern="[0-9]{6}"
               maxLength={6}
               value={mfaCode}
-              onChange={(event) => setMfaCode(event.target.value.replace(/\\D/g, '').slice(0, 6))}
+              onChange={(event) => setMfaCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
               placeholder="000000"
               required
             />
