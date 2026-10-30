@@ -4,6 +4,11 @@ import { supabase } from '../supabase';
 export default function Admin({ onBack }) {
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaCode, setMfaCode] = useState('');
+  const [mfaFactorId, setMfaFactorId] = useState('');
+  const [mfaChallengeId, setMfaChallengeId] = useState('');
+  const [mfaBusy, setMfaBusy] = useState(false);
   const [games, setGames] = useState([]);
   const [message, setMessage] = useState('');
   const [saving, setSaving] = useState(false);
@@ -111,6 +116,46 @@ async function loadProducts() {
 
         if (!active) return;
 
+        const { data: assurance, error: assuranceError } =
+          await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+
+        if (assuranceError) {
+          throw assuranceError;
+        }
+
+        if (assurance?.currentLevel !== 'aal2') {
+          const { data: factorsData, error: factorsError } =
+            await supabase.auth.mfa.listFactors();
+
+          if (factorsError) throw factorsError;
+
+          const verifiedTotp = (factorsData?.totp || []).find(
+            (factor) => factor.status === 'verified'
+          );
+
+          if (!verifiedTotp) {
+            if (active) {
+              setMessage('Akun admin memerlukan MFA TOTP terverifikasi. Daftarkan faktor MFA terlebih dahulu.');
+              setLoading(false);
+            }
+            return;
+          }
+
+          const { data: challengeData, error: challengeError } =
+            await supabase.auth.mfa.challenge({ factorId: verifiedTotp.id });
+
+          if (challengeError) throw challengeError;
+
+          if (active) {
+            setMfaFactorId(verifiedTotp.id);
+            setMfaChallengeId(challengeData.id);
+            setMfaRequired(true);
+            setMessage('Masukkan kode 6 digit dari aplikasi autentikator untuk melanjutkan.');
+            setLoading(false);
+          }
+          return;
+        }
+
         setAuthorized(true);
         await Promise.all([loadGames(), loadProducts()]);
 
@@ -132,6 +177,52 @@ async function loadProducts() {
       active = false;
     };
   }, []);
+
+  async function verifyMfaCode(event) {
+    event.preventDefault();
+    setMessage('');
+
+    if (!/^\\d{6}$/.test(mfaCode)) {
+      setMessage('Masukkan kode autentikator 6 digit.');
+      return;
+    }
+
+    setMfaBusy(true);
+    try {
+      const { error } = await supabase.auth.mfa.verify({
+        factorId: mfaFactorId,
+        challengeId: mfaChallengeId,
+        code: mfaCode,
+      });
+
+      if (error) throw error;
+
+      const { data: assurance, error: assuranceError } =
+        await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+
+      if (assuranceError) throw assuranceError;
+      if (assurance?.currentLevel !== 'aal2') {
+        throw new Error('Verifikasi belum meningkatkan sesi ke AAL2.');
+      }
+
+      const { data: isAdmin, error: adminError } =
+        await supabase.rpc('is_admin');
+
+      if (adminError || isAdmin !== true) {
+        throw new Error('Akses ditolak. Akun admin diperlukan.');
+      }
+
+      setMfaRequired(false);
+      setAuthorized(true);
+      setMessage('Verifikasi MFA berhasil. Sesi admin berada pada AAL2.');
+      await Promise.all([loadGames(), loadProducts()]);
+    } catch (error) {
+      setMessage(error?.message || 'Verifikasi MFA gagal.');
+      setMfaCode('');
+    } finally {
+      setMfaBusy(false);
+    }
+  }
 
   async function testMelostoreConnection() {
     setProviderTesting(true);
@@ -667,6 +758,39 @@ async function loadProducts() {
     return (
       <main className="admin-page">
         <p>Memeriksa akses admin...</p>
+      </main>
+    );
+  }
+
+  if (mfaRequired) {
+    return (
+      <main className="admin-page">
+        <button onClick={onBack}>← Kembali</button>
+        <header className="admin-heading">
+          <p className="admin-eyebrow">VERIFIKASI KEAMANAN</p>
+          <h1>Verifikasi MFA Admin</h1>
+          <p>Masukkan kode 6 digit dari aplikasi autentikator yang sudah terdaftar pada akun admin.</p>
+        </header>
+        {message && <p className="admin-message" role="status">{message}</p>}
+        <form className="admin-form" onSubmit={verifyMfaCode}>
+          <label>
+            Kode autentikator
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              pattern="[0-9]{6}"
+              maxLength={6}
+              value={mfaCode}
+              onChange={(event) => setMfaCode(event.target.value.replace(/\\D/g, '').slice(0, 6))}
+              placeholder="000000"
+              required
+            />
+          </label>
+          <button type="submit" disabled={mfaBusy || mfaCode.length !== 6}>
+            {mfaBusy ? 'Memverifikasi...' : 'Verifikasi dan buka Panel Admin'}
+          </button>
+        </form>
       </main>
     );
   }
