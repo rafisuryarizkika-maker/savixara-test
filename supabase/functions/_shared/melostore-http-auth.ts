@@ -34,6 +34,23 @@ export type AuthFailure = {
   response: Response;
 };
 
+export function withCorsHeaders(
+  response: Response,
+  corsHeaders: Record<string, string>,
+): Response {
+  const headers = new Headers(response.headers);
+
+  for (const [name, value] of Object.entries(corsHeaders)) {
+    headers.set(name, value);
+  }
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 function jsonResponse(
   body: Record<string, unknown>,
   status: number,
