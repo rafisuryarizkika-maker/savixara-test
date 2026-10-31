@@ -6,7 +6,7 @@ export default function AuthGateAudit() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
 
-  async function runAal1Check() {
+  async function runAuthGateCheck() {
     setChecking(true);
     setResult(null);
     setError('');
@@ -38,18 +38,9 @@ export default function AuthGateAudit() {
       const currentLevel = assurance?.currentLevel || 'unknown';
       const nextLevel = assurance?.nextLevel || 'unknown';
 
-      if (currentLevel !== 'aal1') {
-        setResult({
-          skipped: true,
-          currentLevel,
-          nextLevel,
-          message: 'Pengujian endpoint dilewati. Halaman ini hanya menjalankan tes AAL1 agar hasilnya tidak salah ditafsirkan.'
-        });
-        return;
-      }
-
       // Supabase JS attaches the current user's access token internally.
       // The token is never displayed, logged, or copied into the page.
+      // This invokes only the isolated auth-gate function, never the provider.
       const { data, error: invokeError } =
         await supabase.functions.invoke('melostore-auth-gate-audit-v2', {
           body: {}
@@ -57,7 +48,7 @@ export default function AuthGateAudit() {
 
       if (invokeError) {
         let responseBody = null;
-        let status = invokeError.context?.status ?? null;
+        const status = invokeError.context?.status ?? null;
 
         try {
           if (invokeError.context && typeof invokeError.context.clone === 'function') {
@@ -84,7 +75,7 @@ export default function AuthGateAudit() {
         nextLevel,
         httpStatus: 200,
         response: data,
-        message: 'Endpoint menerima permintaan. Periksa hasil ini bersama tingkat AAL yang terdeteksi.'
+        message: 'Endpoint menerima permintaan. Cocokkan hasilnya dengan tingkat AAL dan status akun yang digunakan.'
       });
     } catch (err) {
       setError(err?.message || 'Pengujian gagal karena kesalahan yang tidak diketahui.');
@@ -112,12 +103,12 @@ export default function AuthGateAudit() {
         <p style={{ color: '#38BDF8', fontWeight: 700, letterSpacing: 1 }}>
           SAVIXARA TEST · AUDIT AUTENTIKASI
         </p>
-        <h1 style={{ marginTop: 8 }}>Tes Endpoint AAL1</h1>
+        <h1 style={{ marginTop: 8 }}>Tes Endpoint AAL2 & Hak Admin</h1>
         <p style={{ color: '#CBD5E1', lineHeight: 1.6 }}>
-          Halaman sementara ini memeriksa sesi login dan tingkat autentikasi,
-          lalu mengirim permintaan hanya ke endpoint pemeriksaan autentikasi.
-          Halaman ini tidak menjalankan sinkronisasi, tidak memanggil Melostore,
-          dan tidak mengubah katalog.
+          Halaman ini memeriksa sesi dan tingkat autentikasi saat ini, lalu
+          memanggil endpoint pemeriksaan autentikasi saja. Endpoint akan
+          memeriksa AAL2 dan hak admin. Halaman ini tidak menjalankan
+          sinkronisasi, tidak memanggil Melostore, dan tidak mengubah katalog.
         </p>
 
         <div style={{
@@ -129,17 +120,18 @@ export default function AuthGateAudit() {
           fontSize: 14,
           lineHeight: 1.7
         }}>
-          <strong style={{ color: '#F8FAFC' }}>Batas pengujian</strong>
+          <strong style={{ color: '#F8FAFC' }}>Tujuan pengujian</strong>
           <ul style={{ marginBottom: 0, paddingLeft: 20 }}>
-            <li>Hanya berjalan jika sesi aktif berada pada AAL1.</li>
-            <li>Token tetap dikelola oleh Supabase JS dan tidak ditampilkan.</li>
-            <li>Jika sesi AAL2, permintaan tidak dikirim.</li>
+            <li>Non-admin dengan AAL2 harus ditolak sebagai bukan admin.</li>
+            <li>Admin dengan AAL2 harus lolos pemeriksaan autentikasi.</li>
+            <li>Sesi AAL1 tetap harus ditolak karena belum memenuhi MFA.</li>
+            <li>Token dikelola oleh Supabase JS dan tidak ditampilkan.</li>
           </ul>
         </div>
 
         <button
           type="button"
-          onClick={runAal1Check}
+          onClick={runAuthGateCheck}
           disabled={checking}
           style={{
             width: '100%',
@@ -152,7 +144,7 @@ export default function AuthGateAudit() {
             cursor: checking ? 'wait' : 'pointer'
           }}
         >
-          {checking ? 'Memeriksa sesi dan endpoint...' : 'Jalankan Tes AAL1'}
+          {checking ? 'Memeriksa sesi dan endpoint...' : 'Jalankan Tes Autentikasi'}
         </button>
 
         {error && (
@@ -194,11 +186,6 @@ export default function AuthGateAudit() {
               }}>
                 {JSON.stringify(result.response, null, 2)}
               </pre>
-            )}
-            {result.skipped && (
-              <p style={{ color: '#FBBF24' }}>
-                Endpoint tidak dipanggil karena sesi bukan AAL1.
-              </p>
             )}
           </div>
         )}
