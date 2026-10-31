@@ -5,6 +5,9 @@ export default function AuthGateAudit() {
   const [checking, setChecking] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+  const [verifiedFactorId, setVerifiedFactorId] = useState('');
+  const [mfaCode, setMfaCode] = useState('');
+  const [mfaWorking, setMfaWorking] = useState(false);
 
   async function runAuthGateCheck() {
     setChecking(true);
@@ -37,6 +40,15 @@ export default function AuthGateAudit() {
 
       const currentLevel = assurance?.currentLevel || 'unknown';
       const nextLevel = assurance?.nextLevel || 'unknown';
+
+      if (currentLevel !== 'aal2' && nextLevel === 'aal2') {
+        const { data: factors, error: factorsError } = await supabase.auth.mfa.listFactors();
+        if (factorsError) throw factorsError;
+        const verifiedTotp = (factors?.totp || []).find((factor) => factor.status === 'verified');
+        setVerifiedFactorId(verifiedTotp?.id || '');
+      } else {
+        setVerifiedFactorId('');
+      }
 
       // Supabase JS attaches the current user's access token internally.
       // The token is never displayed, logged, or copied into the page.
@@ -146,6 +158,48 @@ export default function AuthGateAudit() {
         >
           {checking ? 'Memeriksa sesi dan endpoint...' : 'Jalankan Tes Autentikasi'}
         </button>
+
+        {result?.currentLevel !== 'aal2' && result?.nextLevel === 'aal2' && verifiedFactorId && (
+          <form onSubmit={completeMfaChallenge} style={{
+            marginTop: 18, padding: 14, borderRadius: 12,
+            background: '#0B1020', border: '1px solid rgba(56,189,248,.35)'
+          }}>
+            <strong>Verifikasi MFA untuk sesi ini</strong>
+            <p style={{ color: '#CBD5E1', lineHeight: 1.6 }}>
+              Akun sudah memiliki TOTP terverifikasi, tetapi sesi masih AAL1.
+              Masukkan kode 6 digit dari aplikasi autentikator untuk menaikkan sesi ke AAL2.
+            </p>
+            <input
+              aria-label="Kode autentikator 6 digit"
+              value={mfaCode}
+              onChange={(event) => setMfaCode(event.target.value.replace(/\\D/g, '').slice(0, 6))}
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={6}
+              placeholder="000000"
+              style={{
+                width: '100%', boxSizing: 'border-box', padding: 14,
+                borderRadius: 10, border: '1px solid #334155',
+                background: '#080A12', color: 'white', fontSize: 18,
+                letterSpacing: 5, marginBottom: 12
+              }}
+            />
+            <button type="submit" disabled={mfaWorking || mfaCode.length !== 6}
+              style={{
+                width: '100%', border: 0, borderRadius: 12, padding: 14,
+                color: 'white', fontWeight: 700,
+                background: 'linear-gradient(135deg,#7C3AED,#2563EB)'
+              }}>
+              {mfaWorking ? 'Memverifikasi MFA...' : 'Verifikasi MFA dan Ulangi Tes'}
+            </button>
+          </form>
+        )}
+
+        {result?.currentLevel !== 'aal2' && result?.nextLevel === 'aal2' && !verifiedFactorId && (
+          <p style={{ marginTop: 16, color: '#FCA5A5' }}>
+            Tidak ditemukan faktor TOTP terverifikasi pada akun ini.
+          </p>
+        )}
 
         {error && (
           <div role="alert" style={{
