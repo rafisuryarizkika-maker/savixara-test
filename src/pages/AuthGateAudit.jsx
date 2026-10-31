@@ -96,6 +96,29 @@ export default function AuthGateAudit() {
     }
   }
 
+  async function completeMfaChallenge(event) {
+    event.preventDefault();
+    if (!verifiedFactorId || !/^\\d{6}$/.test(mfaCode)) {
+      setError('Masukkan kode 6 digit dari aplikasi autentikator.');
+      return;
+    }
+
+    setMfaWorking(true);
+    setError('');
+    try {
+      const { error: verifyError } = await supabase.auth.mfa.challengeAndVerify({
+        factorId: verifiedFactorId,
+        code: mfaCode
+      });
+      if (verifyError) throw verifyError;
+      setMfaCode('');
+      await runAuthGateCheck();
+    } catch (err) {
+      setError(err?.message || 'Verifikasi MFA gagal.');
+    } finally {
+      setMfaWorking(false);
+    }
+  }
   return (
     <main style={{
       minHeight: '100vh',
