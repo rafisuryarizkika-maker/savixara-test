@@ -1,0 +1,36 @@
+name: SAVIXARA Auth Audit Build
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "src/pages/AuthGateAudit.jsx"
+      - "src/main.jsx"
+      - "src/supabase.js"
+      - "package.json"
+      - "vite.config.js"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Vite production build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout test repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --no-package-lock
+
+      - name: Build
+        run: npm run build
