@@ -115,3 +115,38 @@ Deno.test("HTTP auth allows admin with AAL2 through the gate only", async () => 
   assertEquals(result.ok, true);
   if (result.ok) assertEquals(result.accessToken, "test-token");
 });
+
+
+import { withCorsHeaders } from "../supabase/functions/_shared/melostore-http-auth.ts";
+
+Deno.test("CORS headers are attached to authentication rejection responses", async () => {
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "https://rafisuryarizkika-maker.github.io",
+    "Access-Control-Allow-Headers": "authorization, apikey, x-client-info, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+  };
+
+  for (const status of [401, 403]) {
+    const original = new Response(JSON.stringify({ ok: false, status }), {
+      status,
+      headers: { "Content-Type": "application/json" },
+    });
+    const response = withCorsHeaders(original, corsHeaders);
+
+    assertEquals(response.status, status);
+    assertEquals(
+      response.headers.get("Access-Control-Allow-Origin"),
+      corsHeaders["Access-Control-Allow-Origin"],
+    );
+    assertEquals(
+      response.headers.get("Access-Control-Allow-Headers"),
+      corsHeaders["Access-Control-Allow-Headers"],
+    );
+    assertEquals(
+      response.headers.get("Access-Control-Allow-Methods"),
+      corsHeaders["Access-Control-Allow-Methods"],
+    );
+    assertEquals(response.headers.get("Content-Type"), "application/json");
+    assertEquals(await response.json(), { ok: false, status });
+  }
+});
