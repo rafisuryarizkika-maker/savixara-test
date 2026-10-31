@@ -1,6 +1,16 @@
 name: SAVIXARA Test Audit
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "supabase/functions/_shared/**"
+      - "supabase/functions/melostore-sync-pricelist-candidate/**"
+      - "tests/auth-gate.test.ts"
+      - "tests/lease-guard.test.ts"
+      - "tests/melostore-http-auth.test.ts"
+      - ".github/workflows/test-audit.yml"
   workflow_dispatch:
     inputs:
       run_database_tests:

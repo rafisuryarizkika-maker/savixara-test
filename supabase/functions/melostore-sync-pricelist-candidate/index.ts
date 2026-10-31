@@ -1,5 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { authenticateMelostoreRequest } from "../_shared/melostore-http-auth.ts";
+import { authenticateMelostoreRequest, withCorsHeaders } from "../_shared/melostore-http-auth.ts";
 
 const corsHeaders = {
 "Access-Control-Allow-Origin": "https://rafisuryarizkika-maker.github.io",
@@ -234,16 +234,7 @@ const authResult = await authenticateMelostoreRequest(
 );
 
 if (!authResult.ok) {
-  return new Response(
-    await authResult.response.text(),
-    {
-      status: authResult.response.status,
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "application/json",
-      },
-    },
-  );
+  return withCorsHeaders(authResult.response, corsHeaders);
 }
   
 // Safe auth-only diagnostic: stop before sync work.
