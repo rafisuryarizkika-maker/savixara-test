@@ -98,7 +98,7 @@ export default function AuthGateAudit() {
 
   async function completeMfaChallenge(event) {
     event.preventDefault();
-    if (!verifiedFactorId || !/^\\d{6}$/.test(mfaCode)) {
+    if (!verifiedFactorId || !/^\d{6}$/.test(mfaCode)) {
       setError('Masukkan kode 6 digit dari aplikasi autentikator.');
       return;
     }
@@ -195,7 +195,7 @@ export default function AuthGateAudit() {
             <input
               aria-label="Kode autentikator 6 digit"
               value={mfaCode}
-              onChange={(event) => setMfaCode(event.target.value.replace(/\\D/g, '').slice(0, 6))}
+              onChange={(event) => setMfaCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
               inputMode="numeric"
               autoComplete="one-time-code"
               maxLength={6}
