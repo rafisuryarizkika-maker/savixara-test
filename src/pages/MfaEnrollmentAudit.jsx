@@ -208,7 +208,7 @@ export default function MfaEnrollmentAudit() {
           overflowWrap: 'anywhere'
         }}><strong>Pendaftaran belum berhasil</strong><p>{error}</p></div>}
 
-        {verified && <a href="/savixara-test/?audit-auth-aal2=1"
+        {verified && <a href="/savixara-test/?audit-auth=1"
           style={{ display: 'inline-block', marginTop: 20, color: '#93C5FD' }}>
           Lanjut ke tes endpoint AAL2 & hak admin
         </a>}
