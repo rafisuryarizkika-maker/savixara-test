@@ -1,5 +1,6 @@
 
 import { assertEquals } from "jsr:@std/assert";
+import { withCorsHeaders } from "../supabase/functions/_shared/melostore-http-auth.ts";
 
 import {
   authenticateMelostoreRequest,
@@ -116,8 +117,6 @@ Deno.test("HTTP auth allows admin with AAL2 through the gate only", async () => 
   if (result.ok) assertEquals(result.accessToken, "test-token");
 });
 
-
-import { withCorsHeaders } from "../supabase/functions/_shared/melostore-http-auth.ts";
 
 Deno.test("CORS headers are attached to authentication rejection responses", async () => {
   const corsHeaders = {
