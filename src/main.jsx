@@ -3,15 +3,18 @@ import { createRoot } from 'react-dom/client';
 
 import Home from './pages/Home';
 import AuthGateAudit from './pages/AuthGateAudit';
+import MfaEnrollmentAudit from './pages/MfaEnrollmentAudit';
 import './styles.css';
 
 // Keep the audit route isolated behind an explicit query parameter.
-const isAuthGateAudit = new URLSearchParams(window.location.search).get('audit-auth') === '1';
+const auditParams = new URLSearchParams(window.location.search);
+const isMfaEnrollmentAudit = auditParams.get('audit-mfa') === '1';
+const isAuthGateAudit = auditParams.get('audit-auth') === '1';
 
 createRoot(
   document.getElementById('root')
 ).render(
   <React.StrictMode>
-    {isAuthGateAudit ? <AuthGateAudit /> : <Home />}
+    {isMfaEnrollmentAudit ? <MfaEnrollmentAudit /> : isAuthGateAudit ? <AuthGateAudit /> : <Home />}
   </React.StrictMode>
 );
