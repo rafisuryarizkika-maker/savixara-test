@@ -383,6 +383,7 @@ message: "Dry-run berhasil. Pricelist diperiksa dan harga jual disimulasikan; ti
 
 let leasedJobId: string | null = null;
 let activeLeaseToken: string | null = null;
+let newlyCreatedJobId: string | null = null;
 
 try {
 let job: SyncJob;
@@ -445,7 +446,7 @@ if (!["pending", "running", "paused"].includes(job.status)) {
 const { data, error } = await db
 .from("melostore_sync_jobs")
 .insert({
-status: "running",
+status: "pending",
 created_by: authResult.userId,
 cursor: null,
 pages_fetched: 0,
@@ -492,6 +493,7 @@ if (error) {
 }
 
 job = data as SyncJob;
+newlyCreatedJobId = job.id;
 }
 
 const waitBeforeRequest = waitMsFromDate(job.next_allowed_at);
@@ -1012,6 +1014,8 @@ if (!paused) {
 
 return jsonResponse({
 ok: false,
+job_id: newlyCreatedJobId,
+retryable_job: newlyCreatedJobId !== null,
 message: error instanceof Error
 ? error.message
 : "Terjadi kesalahan saat sinkronisasi.",
