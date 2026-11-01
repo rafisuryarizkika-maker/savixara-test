@@ -267,10 +267,28 @@ autoRefreshToken: false,
 
 let payload: Record<string, unknown> = {};
 
-try {
-payload = await req.json();
-} catch {
-// Body kosong berarti mulai pekerjaan baru.
+if (req.body !== null) {
+  try {
+    const parsed: unknown = await req.json();
+
+    if (
+      parsed === null ||
+      typeof parsed !== "object" ||
+      Array.isArray(parsed)
+    ) {
+      return jsonResponse({
+        ok: false,
+        message: "Body permintaan harus berupa objek JSON.",
+      }, 400);
+    }
+
+    payload = parsed as Record<string, unknown>;
+  } catch {
+    return jsonResponse({
+      ok: false,
+      message: "Body permintaan bukan JSON yang valid.",
+    }, 400);
+  }
 }
 
 const pageSize = payload.limit === undefined
