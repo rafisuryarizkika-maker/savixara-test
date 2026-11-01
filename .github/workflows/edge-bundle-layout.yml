@@ -1,0 +1,45 @@
+name: SAVIXARA Edge Bundle Layout Check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bundle-layout:
+    name: Verify Supabase-style relative imports
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout test repository
+        uses: actions/checkout@v4
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Recreate candidate bundle directory layout
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/supabase-function/source /tmp/supabase-function/_shared
+          cp supabase/functions/melostore-sync-pricelist-candidate/index.ts /tmp/supabase-function/source/index.ts
+          cp supabase/functions/_shared/melostore-http-auth.ts /tmp/supabase-function/_shared/melostore-http-auth.ts
+          cp supabase/functions/_shared/melostore-auth-gate.ts /tmp/supabase-function/_shared/melostore-auth-gate.ts
+          test -s /tmp/supabase-function/source/index.ts
+          test -s /tmp/supabase-function/_shared/melostore-http-auth.ts
+          test -s /tmp/supabase-function/_shared/melostore-auth-gate.ts
+          grep -Fq '../_shared/melostore-http-auth.ts' /tmp/supabase-function/source/index.ts
+          grep -Fq './melostore-auth-gate.ts' /tmp/supabase-function/_shared/melostore-http-auth.ts
+
+      - name: Type-check entrypoint and relative dependencies
+        working-directory: /tmp/supabase-function
+        run: deno check source/index.ts
+
+      - name: Confirm strict Bearer parser is bundled
+        shell: bash
+        run: |
+          grep -Fq 'const bearerMatch = /^Bearer\\s+([^\\s]+)$/i.exec(authorization);' /tmp/supabase-function/_shared/melostore-http-auth.ts
+          echo "Bundle layout and strict Bearer parser verified."
