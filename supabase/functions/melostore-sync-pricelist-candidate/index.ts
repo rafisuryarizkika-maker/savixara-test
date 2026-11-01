@@ -268,6 +268,14 @@ autoRefreshToken: false,
 let payload: Record<string, unknown> = {};
 
 if (req.body !== null) {
+  const contentType = req.headers.get("Content-Type")?.split(";")[0].trim().toLowerCase();
+  if (contentType !== "application/json") {
+    return jsonResponse({
+      ok: false,
+      message: "Content-Type harus application/json.",
+    }, 415);
+  }
+
   try {
     const parsed: unknown = await req.json();
 
