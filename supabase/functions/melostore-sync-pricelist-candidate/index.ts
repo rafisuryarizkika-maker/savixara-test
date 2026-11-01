@@ -246,6 +246,17 @@ if (new URL(req.url).searchParams.get("auth_check_only") === "1") {
     message: "Autentikasi valid. Sinkronisasi tidak dijalankan.",
   }, 200);
 }
+
+  // Validate request syntax before checking provider secrets or creating clients.
+  // This keeps malformed requests deterministic and does not contact Melostore.
+  const bodyResult = await parseSyncRequestBody(req);
+  if (!bodyResult.ok) {
+    return jsonResponse({
+      ok: false,
+      message: bodyResult.message,
+    }, bodyResult.status);
+  }
+  const payload = bodyResult.payload;
   
 const accessToken = authResult.accessToken;
 const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -266,14 +277,7 @@ autoRefreshToken: false,
 },
 });
 
-const bodyResult = await parseSyncRequestBody(req);
-if (!bodyResult.ok) {
-  return jsonResponse({
-    ok: false,
-    message: bodyResult.message,
-  }, bodyResult.status);
-}
-const payload = bodyResult.payload;
+
 
 const pageSize = payload.limit === undefined
 ? DEFAULT_PAGE_SIZE
