@@ -4,7 +4,7 @@ import { assertEquals } from "jsr:@std/assert";
 const databaseUrl = Deno.env.get("TEST_DATABASE_URL");
 
 Deno.test({
-  name: "PostgreSQL lease lifecycle: single claim, expired reclaim, stale release rejected",
+  name: "PostgreSQL lease lifecycle: concurrent claim, reclaim, pause, completion and safe release",
   sanitizeResources: false,
   sanitizeOps: false,
   fn: async () => {
@@ -50,11 +50,7 @@ Deno.test({
 
       // Two independent SQL statements compete for the same pending row.
       const [claimA, claimB] = await Promise.all([claim(tokenA), claim(tokenB)]);
-      assertEquals(
-        claimA.length + claimB.length,
-        1,
-        "Exactly one concurrent claimant must win",
-      );
+      assertEquals(claimA.length + claimB.length, 1, "Exactly one concurrent claimant must win");
 
       const winningToken = claimA.length === 1 ? tokenA : tokenB;
       const losingToken = claimA.length === 1 ? tokenB : tokenA;
@@ -94,21 +90,101 @@ Deno.test({
       `;
       assertEquals(afterStaleRelease[0].lease_token, tokenC);
 
-      // The current worker can release its own lease.
+      // Current worker releases its own lease, leaving the job claimable.
       const validRelease = await db`
         UPDATE public.melostore_sync_jobs
-        SET lease_token = NULL, lease_until = NULL
+        SET lease_token = NULL, lease_until = NULL, updated_at = clock_timestamp()
         WHERE id = ${jobId}::uuid
           AND lease_token = ${tokenC}::uuid
         RETURNING id
       `;
       assertEquals(validRelease.length, 1);
 
-      const finalState = await db`
-        SELECT lease_token, lease_until
+      // Reclaim, then exercise the same guarded running -> paused transition
+      // used by the Edge Function's failure handler.
+      const afterReleaseClaim = await claim(tokenA);
+      assertEquals(afterReleaseClaim.length, 1, "Released running job must be claimable");
+
+      const paused = await db`
+        UPDATE public.melostore_sync_jobs
+        SET status = 'paused', updated_at = clock_timestamp()
+        WHERE id = ${jobId}::uuid
+          AND lease_token = ${tokenA}::uuid
+          AND status = 'running'
+          AND lease_until > clock_timestamp()
+        RETURNING status
+      `;
+      assertEquals(paused.length, 1, "Current lease holder can pause a running job");
+      assertEquals(paused[0].status, "paused");
+
+      // Simulate finally-style release after pause; it must preserve paused.
+      const releasePaused = await db`
+        UPDATE public.melostore_sync_jobs
+        SET lease_token = NULL, lease_until = NULL, updated_at = clock_timestamp()
+        WHERE id = ${jobId}::uuid
+          AND lease_token = ${tokenA}::uuid
+        RETURNING status
+      `;
+      assertEquals(releasePaused.length, 1);
+      assertEquals(releasePaused[0].status, "paused");
+
+      const pausedState = await db`
+        SELECT status, lease_token, lease_until
         FROM public.melostore_sync_jobs
         WHERE id = ${jobId}::uuid
       `;
+      assertEquals(pausedState[0].status, "paused");
+      assertEquals(pausedState[0].lease_token, null);
+      assertEquals(pausedState[0].lease_until, null);
+
+      // A paused job can be reclaimed; the prior token cannot pause it again.
+      const reclaimedPaused = await claim(tokenB);
+      assertEquals(reclaimedPaused.length, 1, "Paused job must be reclaimable");
+
+      const stalePause = await db`
+        UPDATE public.melostore_sync_jobs
+        SET status = 'paused'
+        WHERE id = ${jobId}::uuid
+          AND lease_token = ${tokenA}::uuid
+          AND status = 'running'
+          AND lease_until > clock_timestamp()
+        RETURNING id
+      `;
+      assertEquals(stalePause.length, 0, "Stale worker must not pause a reclaimed job");
+
+      // Simulate completion followed by finally-style lease release.
+      const completed = await db`
+        UPDATE public.melostore_sync_jobs
+        SET status = 'completed', updated_at = clock_timestamp()
+        WHERE id = ${jobId}::uuid
+          AND lease_token = ${tokenB}::uuid
+          AND status = 'running'
+          AND lease_until > clock_timestamp()
+        RETURNING status
+      `;
+      assertEquals(completed.length, 1);
+      assertEquals(completed[0].status, "completed");
+
+      const releaseCompleted = await db`
+        UPDATE public.melostore_sync_jobs
+        SET lease_token = NULL, lease_until = NULL, updated_at = clock_timestamp()
+        WHERE id = ${jobId}::uuid
+          AND lease_token = ${tokenB}::uuid
+        RETURNING status
+      `;
+      assertEquals(releaseCompleted.length, 1);
+      assertEquals(
+        releaseCompleted[0].status,
+        "completed",
+        "Lease release must not overwrite completed status",
+      );
+
+      const finalState = await db`
+        SELECT status, lease_token, lease_until
+        FROM public.melostore_sync_jobs
+        WHERE id = ${jobId}::uuid
+      `;
+      assertEquals(finalState[0].status, "completed");
       assertEquals(finalState[0].lease_token, null);
       assertEquals(finalState[0].lease_until, null);
     } finally {
