@@ -82,6 +82,7 @@ async function loadProducts() {
           setSaving(false);
           setMessage('Sesi berakhir atau pengguna keluar. Silakan login kembali.');
           setLoading(false);
+          onBack?.();
         }
       }
     );
