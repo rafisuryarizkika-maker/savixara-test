@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { authenticateMelostoreRequest, withCorsHeaders } from "../_shared/melostore-http-auth.ts";
+import { parseSyncRequestBody } from "../_shared/melostore-sync-request.ts";
 
 const corsHeaders = {
 "Access-Control-Allow-Origin": "https://rafisuryarizkika-maker.github.io",
@@ -265,39 +266,14 @@ autoRefreshToken: false,
 },
 });
 
-let payload: Record<string, unknown> = {};
-
-if (req.body !== null) {
-  const contentType = req.headers.get("Content-Type")?.split(";")[0].trim().toLowerCase();
-  if (contentType !== "application/json") {
-    return jsonResponse({
-      ok: false,
-      message: "Content-Type harus application/json.",
-    }, 415);
-  }
-
-  try {
-    const parsed: unknown = await req.json();
-
-    if (
-      parsed === null ||
-      typeof parsed !== "object" ||
-      Array.isArray(parsed)
-    ) {
-      return jsonResponse({
-        ok: false,
-        message: "Body permintaan harus berupa objek JSON.",
-      }, 400);
-    }
-
-    payload = parsed as Record<string, unknown>;
-  } catch {
-    return jsonResponse({
-      ok: false,
-      message: "Body permintaan bukan JSON yang valid.",
-    }, 400);
-  }
+const bodyResult = await parseSyncRequestBody(req);
+if (!bodyResult.ok) {
+  return jsonResponse({
+    ok: false,
+    message: bodyResult.message,
+  }, bodyResult.status);
 }
+const payload = bodyResult.payload;
 
 const pageSize = payload.limit === undefined
 ? DEFAULT_PAGE_SIZE
