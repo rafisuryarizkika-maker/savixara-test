@@ -67,11 +67,9 @@ export async function authenticateMelostoreRequest(
   req: Request,
   deps: AuthDependencies,
 ): Promise<AuthSuccess | AuthFailure> {
-  const accessToken = (
-    req.headers.get("Authorization") ?? ""
-  )
-    .replace(/^Bearer\s+/i, "")
-    .trim();
+  const authorization = req.headers.get("Authorization")?.trim() ?? "";
+  const bearerMatch = /^Bearer\s+([^\s]+)$/i.exec(authorization);
+  const accessToken = bearerMatch?.[1] ?? "";
 
   if (!accessToken) {
     return {

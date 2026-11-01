@@ -47,6 +47,48 @@ Deno.test("HTTP auth rejects missing token with 401", async () => {
   assertEquals(called, false);
 });
 
+Deno.test("HTTP auth rejects raw token without Bearer scheme", async () => {
+  let called = false;
+  const deps = makeDeps({
+    getUser: async () => {
+      called = true;
+      return { user: { id: "test-user" }, error: null };
+    },
+  });
+  const result = await authenticateMelostoreRequest(
+    new Request("https://example.test", {
+      method: "POST",
+      headers: { Authorization: "raw-token" },
+    }),
+    deps,
+  );
+  assertEquals(result.ok, false);
+  if (!result.ok) assertEquals(result.response.status, 401);
+  assertEquals(called, false);
+});
+
+Deno.test("HTTP auth rejects non-Bearer and malformed authorization headers", async () => {
+  for (const authorization of ["Basic abc", "Bearer", "Bearer token extra"]) {
+    let called = false;
+    const deps = makeDeps({
+      getUser: async () => {
+        called = true;
+        return { user: { id: "test-user" }, error: null };
+      },
+    });
+    const result = await authenticateMelostoreRequest(
+      new Request("https://example.test", {
+        method: "POST",
+        headers: { Authorization: authorization },
+      }),
+      deps,
+    );
+    assertEquals(result.ok, false);
+    if (!result.ok) assertEquals(result.response.status, 401);
+    assertEquals(called, false);
+  }
+});
+
 Deno.test("HTTP auth rejects invalid user with 401", async () => {
   const deps = makeDeps({
     getUser: async () => ({
