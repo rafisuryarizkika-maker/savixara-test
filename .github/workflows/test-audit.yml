@@ -94,5 +94,5 @@ jobs:
             tests/rpc-decimal-price.test.ts \
             tests/rpc-idempotency.test.ts \
             tests/rpc-lease-guard.test.ts \
-            tests/rpc-lease-wrapper-8-param.test.ts \\
+            tests/rpc-lease-wrapper-8-param.test.ts \
             tests/job-lease-lifecycle.test.ts
