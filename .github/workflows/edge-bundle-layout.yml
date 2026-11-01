@@ -1,6 +1,9 @@
 name: SAVIXARA Edge Bundle Layout Check
 
 on:
+  push:
+    branches:
+      - audit/edge-bundle-layout-20261102
   workflow_dispatch:
 
 permissions:
