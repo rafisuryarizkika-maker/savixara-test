@@ -11,6 +11,7 @@ on:
       - "tests/lease-guard.test.ts"
       - "tests/melostore-http-auth.test.ts"
       - "tests/melostore-sync-request.test.ts"
+      - "tests/job-lease-lifecycle.test.ts"
       - "supabase/functions/_shared/melostore-sync-request.ts"
       - ".github/workflows/test-audit.yml"
   workflow_dispatch:
@@ -93,4 +94,5 @@ jobs:
             tests/rpc-decimal-price.test.ts \
             tests/rpc-idempotency.test.ts \
             tests/rpc-lease-guard.test.ts \
-            tests/rpc-lease-wrapper-8-param.test.ts
+            tests/rpc-lease-wrapper-8-param.test.ts \\
+            tests/job-lease-lifecycle.test.ts
