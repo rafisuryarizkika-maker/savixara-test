@@ -49,7 +49,7 @@ jobs:
 
   database-tests:
     name: PostgreSQL integration tests (test project only)
-    if: inputs.run_database_tests
+    if: github.event_name == 'pull_request' || inputs.run_database_tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
