@@ -44,5 +44,5 @@ jobs:
       - name: Confirm strict Bearer parser is bundled
         shell: bash
         run: |
-          grep -Fq 'const bearerMatch = /^Bearer\\s+([^\\s]+)$/i.exec(authorization);' /tmp/supabase-function/_shared/melostore-http-auth.ts
+          grep -Fq 'const bearerMatch = /^Bearer\s+([^\s]+)$/i.exec(authorization);' /tmp/supabase-function/_shared/melostore-http-auth.ts
           echo "Bundle layout and strict Bearer parser verified."
