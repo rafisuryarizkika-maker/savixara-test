@@ -11,6 +11,7 @@ on:
       - "tests/lease-guard.test.ts"
       - "tests/melostore-http-auth.test.ts"
       - "tests/melostore-sync-request.test.ts"
+      - "tests/job-lease-lifecycle.test.ts"
       - "supabase/functions/_shared/melostore-sync-request.ts"
       - ".github/workflows/test-audit.yml"
   workflow_dispatch:
@@ -48,7 +49,7 @@ jobs:
 
   database-tests:
     name: PostgreSQL integration tests (test project only)
-    if: inputs.run_database_tests
+    if: github.event_name == 'pull_request' || inputs.run_database_tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -93,4 +94,5 @@ jobs:
             tests/rpc-decimal-price.test.ts \
             tests/rpc-idempotency.test.ts \
             tests/rpc-lease-guard.test.ts \
-            tests/rpc-lease-wrapper-8-param.test.ts
+            tests/rpc-lease-wrapper-8-param.test.ts \
+            tests/job-lease-lifecycle.test.ts
