@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { authenticateMelostoreRequest, withCorsHeaders } from "../_shared/melostore-http-auth.ts";
+import { parseSyncRequestBody } from "../_shared/melostore-sync-request.ts";
 
 const corsHeaders = {
 "Access-Control-Allow-Origin": "https://rafisuryarizkika-maker.github.io",
@@ -265,13 +266,14 @@ autoRefreshToken: false,
 },
 });
 
-let payload: Record<string, unknown> = {};
-
-try {
-payload = await req.json();
-} catch {
-// Body kosong berarti mulai pekerjaan baru.
+const bodyResult = await parseSyncRequestBody(req);
+if (!bodyResult.ok) {
+  return jsonResponse({
+    ok: false,
+    message: bodyResult.message,
+  }, bodyResult.status);
 }
+const payload = bodyResult.payload;
 
 const pageSize = payload.limit === undefined
 ? DEFAULT_PAGE_SIZE

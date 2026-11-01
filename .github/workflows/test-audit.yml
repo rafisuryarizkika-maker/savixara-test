@@ -10,6 +10,8 @@ on:
       - "tests/auth-gate.test.ts"
       - "tests/lease-guard.test.ts"
       - "tests/melostore-http-auth.test.ts"
+      - "tests/melostore-sync-request.test.ts"
+      - "supabase/functions/_shared/melostore-sync-request.ts"
       - ".github/workflows/test-audit.yml"
   workflow_dispatch:
     inputs:
@@ -42,7 +44,7 @@ jobs:
 
       - name: Run isolated unit tests (no database or provider calls)
         run: |
-          deno test tests/auth-gate.test.ts tests/lease-guard.test.ts tests/melostore-http-auth.test.ts
+          deno test tests/auth-gate.test.ts tests/lease-guard.test.ts tests/melostore-http-auth.test.ts tests/melostore-sync-request.test.ts
 
   database-tests:
     name: PostgreSQL integration tests (test project only)
