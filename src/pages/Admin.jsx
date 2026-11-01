@@ -66,6 +66,33 @@ async function loadProducts() {
 }
 
   useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === 'SIGNED_OUT' || event === 'USER_DELETED' || !session) {
+          setAuthorized(false);
+          setMfaRequired(false);
+          setMfaCode('');
+          setMfaFactorId('');
+          setMfaChallengeId('');
+          setMfaBusy(false);
+          setGames([]);
+          setProducts([]);
+          setProductsLoading(false);
+          setProductSavingId(null);
+          setSaving(false);
+          setMessage('Sesi berakhir atau pengguna keluar. Silakan login kembali.');
+          setLoading(false);
+          onBack?.();
+        }
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
     let active = true;
 
     async function checkAdmin() {
