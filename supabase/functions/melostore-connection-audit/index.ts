@@ -2,7 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import {
   authenticateMelostoreRequest,
   withCorsHeaders,
-} from "../_shared/melostore-http-auth.ts";
+} from "./_shared/melostore-http-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "https://rafisuryarizkika-maker.github.io",
