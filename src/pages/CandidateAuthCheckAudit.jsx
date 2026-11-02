@@ -6,6 +6,57 @@ export default function CandidateAuthCheckAudit() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
 
+  const [checkingConnection, setCheckingConnection] = useState(false);
+  const [connectionResult, setConnectionResult] = useState(null);
+  const [connectionError, setConnectionError] = useState('');
+
+  async function runMelostoreConnectionCheck() {
+    setCheckingConnection(true);
+    setConnectionResult(null);
+    setConnectionError('');
+
+    try {
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+      if (!sessionData?.session) {
+        throw new Error('Sesi login tidak ditemukan. Login ke SAVIXARA-test terlebih dahulu.');
+      }
+
+      const { data, error: invokeError } = await supabase.functions.invoke(
+        'melostore-connection-audit',
+        { method: 'POST' }
+      );
+
+      if (invokeError) {
+        let response = null;
+        try {
+          if (invokeError.context?.clone) {
+            response = await invokeError.context.clone().json();
+          }
+        } catch {
+          response = null;
+        }
+        setConnectionResult({
+          httpStatus: invokeError.context?.status ?? null,
+          response,
+          message: invokeError.message || 'Pemeriksaan koneksi ditolak.'
+        });
+        return;
+      }
+
+      setConnectionResult({
+        httpStatus: 200,
+        response: data,
+        message: data?.message || 'Pemeriksaan koneksi selesai.'
+      });
+    } catch (err) {
+      setConnectionError(err?.message || 'Pemeriksaan koneksi gagal.');
+    } finally {
+      setCheckingConnection(false);
+    }
+  }
+
   async function runCandidateAuthCheck() {
     setChecking(true);
     setResult(null);
@@ -126,6 +177,48 @@ export default function CandidateAuthCheckAudit() {
             {JSON.stringify(result.response, null, 2)}
           </pre>}
         </div>}
+
+        <div style={{ height: 1, background: 'rgba(148,163,184,.2)', margin: '26px 0' }} />
+        <h2 style={{ marginBottom: 8 }}>Tes koneksi API Melostore (read-only)</h2>
+        <p style={{ color: '#CBD5E1', lineHeight: 1.65 }}>
+          Memeriksa kredensial melalui GET /api/v1/h2h/profile.
+          Hanya admin dengan AAL2 yang dapat menjalankan tes ini.
+          Respons profil sensitif tidak ditampilkan; tidak ada pesanan,
+          sinkronisasi, atau perubahan katalog.
+        </p>
+        <button type="button" onClick={runMelostoreConnectionCheck}
+          disabled={checkingConnection}
+          style={{ width: '100%', border: 0, borderRadius: 12, padding: '14px 18px',
+            color: 'white', fontWeight: 700,
+            background: checkingConnection ? '#475569' : 'linear-gradient(135deg,#0F766E,#0891B2)' }}>
+          {checkingConnection ? 'Memeriksa koneksi Melostore...' : 'Uji Koneksi Melostore (GET Profile)'}
+        </button>
+        {connectionError && <div role="alert" style={{ marginTop: 18, padding: 14,
+          borderRadius: 12, background: 'rgba(248,113,113,.12)',
+          border: '1px solid rgba(248,113,113,.35)', overflowWrap: 'anywhere' }}>
+          <strong>Koneksi belum terverifikasi</strong><p>{connectionError}</p>
+        </div>}
+        {connectionResult && <div role="status" style={{ marginTop: 18, padding: 14,
+          borderRadius: 12, background: '#0B1020',
+          border: '1px solid rgba(56,189,248,.35)', overflowWrap: 'anywhere' }}>
+          <strong>Hasil tes koneksi Melostore</strong>
+          <p>Status HTTP: <b>{connectionResult.httpStatus ?? 'tidak tersedia'}</b></p>
+          <p>{connectionResult.message}</p>
+          {connectionResult.response?.account_mode &&
+            <p>Mode akun H2H: <b>{connectionResult.response.account_mode}</b></p>}
+          <p style={{ color: connectionResult.response?.provider_authenticated === true
+            ? '#86EFAC' : '#FCA5A5', fontWeight: 700 }}>
+            {connectionResult.response?.provider_authenticated === true
+              ? 'TERHUBUNG: autentikasi API Melostore berhasil.'
+              : 'BELUM TERVERIFIKASI: periksa hasil dan mode akun.'}
+          </p>
+          {connectionResult.response && <pre style={{ whiteSpace: 'pre-wrap',
+            overflowWrap: 'anywhere', background: '#05070D', padding: 12,
+            borderRadius: 8, fontSize: 12 }}>
+            {JSON.stringify(connectionResult.response, null, 2)}
+          </pre>}
+        </div>}
+
         <a href="/savixara-test/" style={{ display: 'inline-block', marginTop: 22,
           color: '#93C5FD', textDecoration: 'none' }}>
           ← Kembali ke SAVIXARA test
