@@ -10,6 +10,10 @@ export default function CandidateAuthCheckAudit() {
   const [connectionResult, setConnectionResult] = useState(null);
   const [connectionError, setConnectionError] = useState('');
 
+  const [checkingCatalog, setCheckingCatalog] = useState(false);
+  const [catalogResult, setCatalogResult] = useState(null);
+  const [catalogError, setCatalogError] = useState('');
+
   async function runMelostoreConnectionCheck() {
     setCheckingConnection(true);
     setConnectionResult(null);
@@ -54,6 +58,38 @@ export default function CandidateAuthCheckAudit() {
       setConnectionError(err?.message || 'Pemeriksaan koneksi gagal.');
     } finally {
       setCheckingConnection(false);
+    }
+  }
+
+  async function runCatalogReadAudit() {
+    setCheckingCatalog(true);
+    setCatalogResult(null);
+    setCatalogError('');
+    try {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+      if (!sessionData?.session) throw new Error('Sesi login tidak ditemukan. Login terlebih dahulu.');
+      const { data, error: invokeError } = await supabase.functions.invoke(
+        'melostore-catalog-read-audit',
+        { method: 'POST' }
+      );
+      if (invokeError) {
+        let response = null;
+        try {
+          if (invokeError.context?.clone) response = await invokeError.context.clone().json();
+        } catch { response = null; }
+        setCatalogResult({
+          httpStatus: invokeError.context?.status ?? null,
+          response,
+          message: invokeError.message || 'Pemeriksaan katalog ditolak.'
+        });
+        return;
+      }
+      setCatalogResult({ httpStatus: 200, response: data, message: data?.message || 'Pemeriksaan selesai.' });
+    } catch (err) {
+      setCatalogError(err?.message || 'Pemeriksaan katalog gagal.');
+    } finally {
+      setCheckingCatalog(false);
     }
   }
 
@@ -216,6 +252,42 @@ export default function CandidateAuthCheckAudit() {
             overflowWrap: 'anywhere', background: '#05070D', padding: 12,
             borderRadius: 8, fontSize: 12 }}>
             {JSON.stringify(connectionResult.response, null, 2)}
+          </pre>}
+        </div>}
+
+        <div style={{ height: 1, background: 'rgba(148,163,184,.2)', margin: '26px 0' }} />
+        <h2 style={{ marginBottom: 8 }}>Audit katalog Melostore (GET read-only)</h2>
+        <p style={{ color: '#CBD5E1', lineHeight: 1.65 }}>
+          Mengambil maksimal 5 contoh dari katalog reguler dan Smart. Memeriksa bentuk SKU,
+          harga, status, varian, serta metadata pagination. Hanya admin AAL2.
+          Tidak membuat job, tidak menjalankan sinkronisasi, dan tidak mengubah katalog.
+        </p>
+        <button type="button" onClick={runCatalogReadAudit} disabled={checkingCatalog}
+          style={{ width: '100%', border: 0, borderRadius: 12, padding: '14px 18px',
+            color: 'white', fontWeight: 700,
+            background: checkingCatalog ? '#475569' : 'linear-gradient(135deg,#6D28D9,#2563EB)' }}>
+          {checkingCatalog ? 'Memeriksa katalog...' : 'Uji Katalog Reguler + Smart (GET)'}
+        </button>
+        {catalogError && <div role="alert" style={{ marginTop: 18, padding: 14,
+          borderRadius: 12, background: 'rgba(248,113,113,.12)',
+          border: '1px solid rgba(248,113,113,.35)', overflowWrap: 'anywhere' }}>
+          <strong>Audit katalog belum berhasil</strong><p>{catalogError}</p>
+        </div>}
+        {catalogResult && <div role="status" style={{ marginTop: 18, padding: 14,
+          borderRadius: 12, background: '#0B1020',
+          border: '1px solid rgba(56,189,248,.35)', overflowWrap: 'anywhere' }}>
+          <strong>Hasil audit katalog Melostore</strong>
+          <p>Status HTTP: <b>{catalogResult.httpStatus ?? 'tidak tersedia'}</b></p>
+          <p>{catalogResult.message}</p>
+          <p style={{ color: catalogResult.response?.ok === true ? '#86EFAC' : '#FCA5A5', fontWeight: 700 }}>
+            {catalogResult.response?.ok === true
+              ? 'LULUS: struktur respons katalog berhasil dibaca.'
+              : 'BELUM LULUS: periksa respons katalog di bawah.'}
+          </p>
+          {catalogResult.response && <pre style={{ whiteSpace: 'pre-wrap',
+            overflowWrap: 'anywhere', background: '#05070D', padding: 12,
+            borderRadius: 8, fontSize: 12 }}>
+            {JSON.stringify(catalogResult.response, null, 2)}
           </pre>}
         </div>}
 
