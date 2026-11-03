@@ -88,8 +88,9 @@ export function parseSmartProduct(input: unknown): SmartParseResult {
   const inquiryFormKey = nonEmptyString(item.inquiry_form_key);
   const h2hDescription = nullableString(item.h2h_description);
   const description = nullableString(item.description);
-  const minPrice = positiveInteger(item.min_price);
-  const maxPrice = positiveInteger(item.max_price);
+  // The API documents integer fields but does not specify a positive minimum.
+  const minPrice = nonNegativeInteger(item.min_price);
+  const maxPrice = nonNegativeInteger(item.max_price);
 
   if (!name) return fail("missing_name", "Nama produk Smart kosong.");
   if (!smartSku) return fail("missing_smart_sku", "smart_sku_code kosong.");
@@ -101,7 +102,7 @@ export function parseSmartProduct(input: unknown): SmartParseResult {
   if (!inquiryFormKey) return fail("missing_inquiry_form_key", "inquiry_form_key kosong.");
   if (h2hDescription === undefined) return fail("invalid_h2h_description", "h2h_description harus string atau null.");
   if (description === undefined) return fail("invalid_description", "description harus string atau null.");
-  if (minPrice === null) return fail("invalid_min_price", "min_price harus bilangan bulat positif.");
+  if (minPrice === null) return fail("invalid_min_price", "min_price harus bilangan bulat non-negatif.");
   if (maxPrice === null || maxPrice < minPrice) {
     return fail("invalid_max_price", "max_price tidak valid atau lebih kecil dari min_price.");
   }
@@ -141,11 +142,9 @@ export function parseSmartProduct(input: unknown): SmartParseResult {
     const status = normalizeStatus(variant.status);
     if (!status) return fail("unknown_variant_status", `Status varian ke-${index + 1} tidak dikenal.`);
 
+    // The documented schema permits integer or null prices for either status.
     const price = parsePrice(variant.price);
-    if (price === undefined) return fail("invalid_variant_price", `Harga varian ke-${index + 1} harus integer atau null.`);
-    if (status === "active" && (price === null || price <= 0)) {
-      return fail("active_variant_without_price", `Varian aktif ke-${index + 1} harus memiliki harga positif.`);
-    }
+    if (price === undefined) return fail("invalid_variant_price", `Harga varian ke-${index + 1} harus integer non-negatif atau null.`);
 
     variants.push({ sku_code: sku, price, status });
   }
