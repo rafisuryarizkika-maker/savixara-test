@@ -32,7 +32,7 @@ Deno.test("accepts documented Smart product shape", () => {
   }
 });
 
-Deno.test("rejects declared/actual variant count mismatch", () => {
+Deno.test("rejects declared/actual variant count mismatch for manual review", () => {
   const result = parseSmartProduct({ ...validProduct, variant_count: 11 });
   assertEquals(result.ok, false);
   if (!result.ok) assertEquals(result.code, "variant_count_mismatch");
@@ -81,24 +81,32 @@ Deno.test("accepts integer prices and out-of-stock null prices", () => {
   }
 });
 
-Deno.test("rejects decimal variant prices because documented type is integer", () => {
-  const result = parseSmartProduct({
-    ...validProduct,
-    variant_count: 1,
-    variants: [{ sku_code: "VAR-001", price: 10000.5, status: "active" }],
-  });
-  assertEquals(result.ok, false);
-  if (!result.ok) assertEquals(result.code, "invalid_variant_price");
+Deno.test("rejects decimal and negative variant prices", () => {
+  for (const price of [10000.5, -1]) {
+    const result = parseSmartProduct({
+      ...validProduct,
+      variant_count: 1,
+      variants: [{ sku_code: "VAR-001", price, status: "active" }],
+    });
+    assertEquals(result.ok, false);
+    if (!result.ok) assertEquals(result.code, "invalid_variant_price");
+  }
 });
 
-Deno.test("rejects active variants without a positive price", () => {
+Deno.test("accepts documented zero min/max and nullable active variant price", () => {
   const result = parseSmartProduct({
     ...validProduct,
+    min_price: 0,
+    max_price: 0,
     variant_count: 1,
     variants: [{ sku_code: "VAR-001", price: null, status: "active" }],
   });
-  assertEquals(result.ok, false);
-  if (!result.ok) assertEquals(result.code, "active_variant_without_price");
+  assertEquals(result.ok, true);
+  if (result.ok) {
+    assertEquals(result.product.min_price, 0);
+    assertEquals(result.product.max_price, 0);
+    assertEquals(result.product.variants[0].price, null);
+  }
 });
 
 Deno.test("rejects invalid min/max price range", () => {
