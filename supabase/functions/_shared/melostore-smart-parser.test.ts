@@ -3,8 +3,18 @@ import { parseSmartProduct } from "./melostore-smart-parser.ts";
 
 const validProduct = {
   name: "Contoh Produk Smart",
-  smart_sku_code: "SMART-001",
+  brand_id: 10,
+  category_name: "Games",
+  type_name: "Diamonds",
+  category_order: 1,
+  type_order: 1,
   status: "active",
+  inquiry_form_key: "example-form",
+  h2h_description: null,
+  description: null,
+  smart_sku_code: "SMART-001",
+  min_price: 10000,
+  max_price: 12000,
   variant_count: 2,
   variants: [
     { sku_code: "VAR-001", price: 10000, status: "active" },
@@ -12,20 +22,18 @@ const validProduct = {
   ],
 };
 
-Deno.test("accepts matching variant count and valid variants", () => {
+Deno.test("accepts documented Smart product shape", () => {
   const result = parseSmartProduct(validProduct);
   assertEquals(result.ok, true);
   if (result.ok) {
     assertEquals(result.product.smart_sku_code, "SMART-001");
+    assertEquals(result.product.brand_id, 10);
     assertEquals(result.product.variants.length, 2);
   }
 });
 
 Deno.test("rejects declared/actual variant count mismatch", () => {
-  const result = parseSmartProduct({
-    ...validProduct,
-    variant_count: 11,
-  });
+  const result = parseSmartProduct({ ...validProduct, variant_count: 11 });
   assertEquals(result.ok, false);
   if (!result.ok) assertEquals(result.code, "variant_count_mismatch");
 });
@@ -34,6 +42,12 @@ Deno.test("rejects missing Smart SKU", () => {
   const result = parseSmartProduct({ ...validProduct, smart_sku_code: " " });
   assertEquals(result.ok, false);
   if (!result.ok) assertEquals(result.code, "missing_smart_sku");
+});
+
+Deno.test("rejects missing required brand metadata", () => {
+  const result = parseSmartProduct({ ...validProduct, brand_id: undefined });
+  assertEquals(result.ok, false);
+  if (!result.ok) assertEquals(result.code, "invalid_brand_id");
 });
 
 Deno.test("rejects missing variant SKU", () => {
@@ -49,7 +63,6 @@ Deno.test("rejects missing variant SKU", () => {
 Deno.test("rejects duplicate variant SKUs case-insensitively", () => {
   const result = parseSmartProduct({
     ...validProduct,
-    variant_count: 2,
     variants: [
       { sku_code: "VAR-001", price: 10000, status: "active" },
       { sku_code: "var-001", price: 12000, status: "active" },
@@ -59,20 +72,23 @@ Deno.test("rejects duplicate variant SKUs case-insensitively", () => {
   if (!result.ok) assertEquals(result.code, "duplicate_variant_sku");
 });
 
-Deno.test("accepts numeric string prices and out-of-stock null prices", () => {
-  const result = parseSmartProduct({
-    ...validProduct,
-    variant_count: 2,
-    variants: [
-      { sku_code: "VAR-001", price: "12500", status: "active" },
-      { sku_code: "VAR-002", price: null, status: "out_of_stock" },
-    ],
-  });
+Deno.test("accepts integer prices and out-of-stock null prices", () => {
+  const result = parseSmartProduct(validProduct);
   assertEquals(result.ok, true);
   if (result.ok) {
-    assertEquals(result.product.variants[0].price, 12500);
+    assertEquals(result.product.variants[0].price, 10000);
     assertEquals(result.product.variants[1].price, null);
   }
+});
+
+Deno.test("rejects decimal variant prices because documented type is integer", () => {
+  const result = parseSmartProduct({
+    ...validProduct,
+    variant_count: 1,
+    variants: [{ sku_code: "VAR-001", price: 10000.5, status: "active" }],
+  });
+  assertEquals(result.ok, false);
+  if (!result.ok) assertEquals(result.code, "invalid_variant_price");
 });
 
 Deno.test("rejects active variants without a positive price", () => {
@@ -83,6 +99,12 @@ Deno.test("rejects active variants without a positive price", () => {
   });
   assertEquals(result.ok, false);
   if (!result.ok) assertEquals(result.code, "active_variant_without_price");
+});
+
+Deno.test("rejects invalid min/max price range", () => {
+  const result = parseSmartProduct({ ...validProduct, min_price: 15000, max_price: 12000 });
+  assertEquals(result.ok, false);
+  if (!result.ok) assertEquals(result.code, "invalid_max_price");
 });
 
 Deno.test("rejects unknown product or variant status", () => {
